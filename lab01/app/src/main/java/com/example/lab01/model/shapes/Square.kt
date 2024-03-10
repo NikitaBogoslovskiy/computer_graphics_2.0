@@ -42,9 +42,9 @@ class Square(private var coordinates: FloatArray = squareCoordinates,
     private val vertexStride: Int = coordinatesPerVertex * Float.SIZE_BYTES
 
     override fun draw() {
-        GLES20.glUseProgram(program)
         val posLoc = GLES20.glGetAttribLocation(program, "position")
-        GLES20.glEnableVertexAttribArray(posLoc)
+        val colLoc = GLES20.glGetUniformLocation(program, "color")
+        GLES20.glUseProgram(program)
         GLES20.glVertexAttribPointer(
             posLoc,
             coordinatesPerVertex,
@@ -53,9 +53,8 @@ class Square(private var coordinates: FloatArray = squareCoordinates,
             vertexStride,
             vertexBuffer
         )
-        GLES20.glGetUniformLocation(program, "color").also { colorHandle ->
-            GLES20.glUniform4fv(colorHandle, 1, color, 0)
-        }
+        GLES20.glUniform4fv(colLoc, 1, color, 0)
+        GLES20.glEnableVertexAttribArray(posLoc)
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_FAN, 0, vertexCount)
         GLES20.glDisableVertexAttribArray(posLoc)
     }

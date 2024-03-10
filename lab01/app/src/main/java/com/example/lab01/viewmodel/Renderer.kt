@@ -14,14 +14,14 @@ class Renderer : GLSurfaceView.Renderer {
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
-        //square = Square()
+        square = Square()
         triangle = Triangle()
     }
 
     override fun onDrawFrame(unused: GL10) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
-        //square.draw()
-        triangle.draw()
+        square.draw()
+        //triangle.draw()
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
