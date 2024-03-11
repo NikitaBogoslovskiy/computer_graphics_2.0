@@ -1,6 +1,7 @@
 package com.example.lab01.model.shapes
 
 import android.opengl.GLES20
+import android.opengl.Matrix
 import com.example.lab01.model.shaders.BASE_FRAGMENT_SHADER
 import com.example.lab01.model.shaders.BASE_VERTEX_SHADER
 import com.example.lab01.model.utility.loadShader
@@ -19,6 +20,8 @@ val squareColor = floatArrayOf(0.0f, 1.0f, 1.0f, 1.0f)
 class Square(private var coordinates: FloatArray = squareCoordinates,
              private var color: FloatArray = squareColor) : Shape {
 
+    private var modelMatrix = FloatArray(16)
+    private val mvpMatrix = FloatArray(16)
     //Vertices coordinates
     private val vertexBuffer: FloatBuffer =
         ByteBuffer.allocateDirect(coordinates.size * Float.SIZE_BYTES).run {
@@ -41,10 +44,18 @@ class Square(private var coordinates: FloatArray = squareCoordinates,
     private val vertexCount: Int = coordinates.size / coordinatesPerVertex
     private val vertexStride: Int = coordinatesPerVertex * Float.SIZE_BYTES
 
-    override fun draw() {
+    init {
+        Matrix.setIdentityM(modelMatrix, 0)
+        Matrix.translateM(modelMatrix, 0, 1f, 0f, 0f);
+    }
+
+    override fun draw(vPMatrix: FloatArray) {
+        Matrix.multiplyMM(mvpMatrix, 0, vPMatrix, 0, modelMatrix, 0)
         val posLoc = GLES20.glGetAttribLocation(program, "position")
         val colLoc = GLES20.glGetUniformLocation(program, "color")
+        val mvpMatrixLoc = GLES20.glGetUniformLocation(program, "uMVPMatrix")
         GLES20.glUseProgram(program)
+        GLES20.glUniformMatrix4fv(mvpMatrixLoc, 1, false, mvpMatrix, 0)
         GLES20.glVertexAttribPointer(
             posLoc,
             coordinatesPerVertex,

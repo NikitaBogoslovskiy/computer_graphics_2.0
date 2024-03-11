@@ -5,10 +5,15 @@ import javax.microedition.khronos.opengles.GL10
 
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
+import android.opengl.Matrix
 import com.example.lab01.model.shapes.Square
 import com.example.lab01.model.shapes.Triangle
 
 class Renderer : GLSurfaceView.Renderer {
+    private val vPMatrix = FloatArray(16)
+    private val projectionMatrix = FloatArray(16)
+    private val viewMatrix = FloatArray(16)
+
     private lateinit var square: Square
     private lateinit var triangle: Triangle
 
@@ -20,11 +25,15 @@ class Renderer : GLSurfaceView.Renderer {
 
     override fun onDrawFrame(unused: GL10) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
-        square.draw()
-        //triangle.draw()
+        Matrix.setLookAtM(viewMatrix, 0, 0f, 0f, 2f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
+        Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
+        square.draw(vPMatrix)
+        triangle.draw(vPMatrix)
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
         GLES20.glViewport(0, 0, width, height)
+        val ratio: Float = width.toFloat() / height.toFloat()
+        Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1f, 1f, 2f, 7f)
     }
 }

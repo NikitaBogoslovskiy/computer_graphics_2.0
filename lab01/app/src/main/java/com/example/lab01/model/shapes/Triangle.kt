@@ -1,6 +1,7 @@
 package com.example.lab01.model.shapes
 
 import android.opengl.GLES20
+import android.opengl.Matrix
 import com.example.lab01.model.shaders.BASE_FRAGMENT_SHADER
 import com.example.lab01.model.shaders.BASE_VERTEX_SHADER
 import com.example.lab01.model.shaders.MULTICOLOR_FRAGMENT_SHADER
@@ -24,6 +25,8 @@ val triangleColors = floatArrayOf(
 class Triangle(private var coordinates: FloatArray = triangleCoordinates,
                private var colors: FloatArray = triangleColors) : Shape {
 
+    private var modelMatrix = FloatArray(16)
+    private val mvpMatrix = FloatArray(16)
     //Vertices and colors buffers
     private val vertexBuffer: FloatBuffer =
         ByteBuffer.allocateDirect(coordinates.size * Float.SIZE_BYTES).run {
@@ -59,10 +62,18 @@ class Triangle(private var coordinates: FloatArray = triangleCoordinates,
     private val channelsPerColor = 4
     private val colorStride: Int = channelsPerColor * Float.SIZE_BYTES
 
-    override fun draw() {
+    init {
+        Matrix.setIdentityM(modelMatrix, 0)
+        Matrix.translateM(modelMatrix, 0, -1f, 0f, 0f);
+    }
+
+    override fun draw(vPMatrix: FloatArray) {
+        Matrix.multiplyMM(mvpMatrix, 0, vPMatrix, 0, modelMatrix, 0)
         val posLoc = GLES20.glGetAttribLocation(program, "position")
         val colLoc = GLES20.glGetAttribLocation(program, "a_color")
+        val mvpMatrixLoc = GLES20.glGetUniformLocation(program, "uMVPMatrix")
         GLES20.glUseProgram(program)
+        GLES20.glUniformMatrix4fv(mvpMatrixLoc, 1, false, mvpMatrix, 0)
         GLES20.glVertexAttribPointer(
             posLoc,
             coordinatesPerVertex,
