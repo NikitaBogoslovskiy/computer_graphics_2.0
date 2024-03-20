@@ -10,6 +10,7 @@ import com.example.lab01.model.shapes.Cube
 import com.example.lab01.model.shapes.RegularPolygon
 import com.example.lab01.model.shapes.Shape
 import com.example.lab01.model.shapes.Square
+import com.example.lab01.model.shapes.TexturedSquare
 import com.example.lab01.model.shapes.Triangle
 
 class Renderer : GLSurfaceView.Renderer {
@@ -21,6 +22,7 @@ class Renderer : GLSurfaceView.Renderer {
     private lateinit var triangle: Shape
     private lateinit var pentagon: Shape
     private lateinit var cube: Shape
+    private lateinit var texturedSquare: Shape
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
@@ -28,6 +30,7 @@ class Renderer : GLSurfaceView.Renderer {
         triangle = Triangle()
         pentagon = RegularPolygon(5)
         cube = Cube()
+        texturedSquare = TexturedSquare()
     }
 
     override fun onDrawFrame(unused: GL10) {
@@ -38,12 +41,12 @@ class Renderer : GLSurfaceView.Renderer {
         //triangle.draw(vPMatrix)
         pentagon.draw(vPMatrix)
         cube.draw(vPMatrix)
-
+        texturedSquare.draw(vPMatrix)
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
         GLES20.glViewport(0, 0, width, height)
         val ratio: Float = width.toFloat() / height.toFloat()
-        Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1f, 1f, 2f, 9f)
+        Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1f, 1f, 3f, 12f)
     }
 }

@@ -51,9 +51,8 @@ class Cube(private var sideLength: Float = 1.5f,
     private val vertexStride: Int = coordinatesPerVertex * Float.SIZE_BYTES
 
     init {
-
         Matrix.setIdentityM(modelMatrix, 0)
-        Matrix.translateM(modelMatrix, 0, 0f, 0f, -2f);
+        Matrix.translateM(modelMatrix, 0, 0f, 0f, -3f);
         Matrix.rotateM(modelMatrix, 0, -45f, 1f, 1f, 0f)
     }
 

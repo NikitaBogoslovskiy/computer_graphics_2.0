@@ -21,3 +21,15 @@ const val MULTICOLOR_VERTEX_SHADER =
             gl_Position = uMVPMatrix * position;
         }
     """
+
+const val TEXTURED_VERTEX_SHADER =
+    """
+        uniform mat4 uMVPMatrix;
+        attribute vec4 a_position;
+        varying vec4 v_position;
+       
+        void main() {
+            v_position = a_position;
+            gl_Position = uMVPMatrix * a_position;
+        }
+    """

@@ -19,3 +19,19 @@ const val MULTICOLOR_FRAGMENT_SHADER =
            gl_FragColor = v_color;
         }
     """
+
+const val TEXTURED_FRAGMENT_SHADER =
+    """
+        precision mediump float;
+        varying vec4 v_position;
+        
+        void main() {
+            float k = 25.0;
+            int sum = int(v_position.x * k);
+            if ((sum - (sum / 2 * 2)) == 0) {
+                gl_FragColor = vec4(0, 0.8, 0.8, 1);
+            } else {
+                gl_FragColor = vec4(1, 1, 1, 1);
+            }
+        }
+    """

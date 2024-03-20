@@ -10,10 +10,10 @@ import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
 var squareCoordinates = floatArrayOf(
-    -0.5f,  0.5f, 0.0f,      // top left
-    -0.5f, -0.5f, 0.0f,      // bottom left
-    0.5f, -0.5f, 0.0f,      // bottom right
-    0.5f,  0.5f, 0.0f       // top right
+    0f, 1f, 0.0f,      // top left
+    0f, 0f, 0.0f,      // bottom left
+    1f, 0f, 0.0f,      // bottom right
+    1f,  1f, 0.0f       // top right
 )
 val squareColor = floatArrayOf(0.0f, 1.0f, 1.0f, 1.0f)
 
