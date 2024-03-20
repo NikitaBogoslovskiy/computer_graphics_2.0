@@ -46,7 +46,7 @@ class Square(private var coordinates: FloatArray = squareCoordinates,
 
     init {
         Matrix.setIdentityM(modelMatrix, 0)
-        Matrix.translateM(modelMatrix, 0, 1f, 0f, 0f);
+        Matrix.translateM(modelMatrix, 0, 0.5f, -0.5f, 0f);
     }
 
     override fun draw(vPMatrix: FloatArray) {

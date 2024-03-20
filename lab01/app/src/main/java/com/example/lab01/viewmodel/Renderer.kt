@@ -37,8 +37,8 @@ class Renderer : GLSurfaceView.Renderer {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
         Matrix.setLookAtM(viewMatrix, 0, 0f, 0f, 3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
         Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
-        //square.draw(vPMatrix)
-        //triangle.draw(vPMatrix)
+/*        square.draw(vPMatrix)
+        triangle.draw(vPMatrix)*/
         pentagon.draw(vPMatrix)
         cube.draw(vPMatrix)
         texturedSquare.draw(vPMatrix)
