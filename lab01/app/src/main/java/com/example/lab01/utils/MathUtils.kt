@@ -3,29 +3,17 @@ package com.example.lab01.utils
 import kotlin.math.PI
 import kotlin.math.sqrt
 
-data class Quaternion(val w: Float = 0f,
-                      val x: Float = 0f,
-                      val y: Float = 0f,
-                      val z: Float = 0f) {
-
-    companion object {
-        fun fromFloatArray(a: FloatArray): Quaternion {
-            return Quaternion(a[0], a[1], a[2], a[3])
-        }
-    }
+data class Point(var x: Float = 0f,
+                 var y: Float = 0f,
+                 var z: Float = 0f) {
+    fun distanceTo(other: Point) = sqrt((other.x - x) * (other.x - x) +
+                                            (other.y - y) * (other.y - y) +
+                                            (other.z - z) * (other.z - z))
 }
 
 data class Vector(var x: Float = 0f,
                   var y: Float = 0f,
                   var z: Float = 0f) {
-
-    fun toFloatArray() = floatArrayOf(x, y, z)
-
-    companion object {
-        fun fromFloatArray(a: FloatArray): Vector {
-            return Vector(a[0], a[1], a[2])
-        }
-    }
 
     operator fun plus(other: Vector): Vector {
         return Vector(x + other.x, y + other.y, z + other.z)
@@ -46,11 +34,23 @@ data class Vector(var x: Float = 0f,
         return Vector(newX, newY, newZ)
     }
 
+    fun dot(other: Vector) = x * other.x + y * other.y
+
+    fun length() = sqrt(x * x + y * y + z * z)
+
     fun normalize(): Vector {
-        val length = sqrt(x * x + y * y + z * z)
-        return Vector(x / length, y / length, z / length)
+        val l = length()
+        return Vector(x / l, y / l, z / l)
     }
 }
 
 private const val MULTIPLIER = (PI / 180).toFloat()
 fun radians(degrees: Float) = degrees * MULTIPLIER
+fun degrees(radians: Float) = radians / MULTIPLIER
+fun sign(value: Float): Float {
+    return when {
+        value < 0f -> -1f
+        value > 0f -> 1f
+        else -> 0f
+    }
+}

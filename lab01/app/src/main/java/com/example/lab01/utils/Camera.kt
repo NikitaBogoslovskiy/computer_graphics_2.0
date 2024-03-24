@@ -1,7 +1,8 @@
 package com.example.lab01.utils
 
 import android.opengl.Matrix
-import kotlin.math.acos
+import kotlin.math.cos
+import kotlin.math.sin
 
 class Camera {
     var isEnabled = true
@@ -9,69 +10,59 @@ class Camera {
     private var cameraPos = Vector(0.0f, 0.0f, 3.0f);
     private var cameraTarget = Vector(0.0f, 0.0f, 0.0f);
     private var cameraUp = Vector(0.0f, 1.0f, 0.0f);
-    private var rotationMatrix = FloatArray(16)
-    private var translationVector = Vector()
-    private var startViewMatrix = FloatArray(16)
     private var viewMatrix = FloatArray(16)
-    private val touchFactor: Float = 0.01f
-    private var dUp = 0f
-    private var dRight = 0f
-    private var dForward = 0f
+    private val touchFactor: Float = 0.0065f
+    private val positionFactor: Float = 1.2f
+    private val directionFactor: Float = 10f
+    private val zoomFactor: Float = 3f
+    private var yaw = -90f
+    private var pitch = 0f
 
     init {
-        Matrix.setIdentityM(rotationMatrix, 0)
-        initViewMatrix()
+        updateViewMatrix()
     }
 
-    private fun initViewMatrix() {
-        Matrix.setLookAtM(startViewMatrix, 0,
+    private fun updateViewMatrix() {
+        Matrix.setLookAtM(viewMatrix, 0,
             cameraPos.x, cameraPos.y, cameraPos.z,
             cameraTarget.x, cameraTarget.y, cameraTarget.z,
             cameraUp.x, cameraUp.y, cameraUp.z)
     }
 
     fun getViewMatrix(): FloatArray {
-        if (!isEnabled) {
-            return startViewMatrix
+        if (isEnabled) {
+            updateViewMatrix()
         }
-        val tempMatrix = startViewMatrix.copyOf()
-        Matrix.translateM(tempMatrix, 0, -cameraPos.x, -cameraPos.y, -cameraPos.z)
-        Matrix.multiplyMM(viewMatrix, 0, rotationMatrix, 0, tempMatrix, 0)
-        updateTranslationVector()
-        Matrix.translateM(viewMatrix, 0, cameraPos.x, cameraPos.y, cameraPos.z)
-        Matrix.translateM(
-            viewMatrix,
-            0,
-            translationVector.x,
-            translationVector.y,
-            translationVector.z
-        )
         return viewMatrix
     }
 
-    fun updateCameraDirection(q: Quaternion) {
-        Matrix.setRotateM(rotationMatrix, 0,
-            (2.0f * acos(q.w) * 180.0f / Math.PI).toFloat(), q.y, -q.x, -q.z)
+    fun updateCameraDirection(dx: Float, dy: Float) {
+        yaw += dx * touchFactor * directionFactor
+        pitch += -dy * touchFactor * directionFactor
+        if(pitch > 89.0f)
+            pitch = 89.0f
+        if(pitch < -89.0f)
+            pitch = -89.0f
+        val direction = Vector()
+        direction.x = cos(radians(yaw)) * cos(radians(pitch))
+        direction.y = sin(radians(pitch))
+        direction.z = sin(radians(yaw)) * cos(radians(pitch))
+        cameraTarget = cameraPos + direction.normalize()
     }
 
     fun updateCameraPosition(dx: Float, dy: Float) {
-        dRight = dx
-        dUp = dy
+        val upShift = cameraUp * dy * touchFactor * positionFactor
+        val sideDirection = (cameraUp * (cameraTarget - cameraPos).normalize()).normalize()
+        val sideShift = sideDirection * dx * touchFactor * positionFactor
+        cameraPos += upShift
+        cameraTarget += upShift
+        cameraPos += sideShift
+        cameraTarget += sideShift
     }
 
-    fun updateCameraZoom(dy: Float) {
-        dForward = dy
-    }
-
-    private fun updateTranslationVector() {
-        val localUp = Vector(viewMatrix[1], viewMatrix[5], viewMatrix[9])
-        val localRight = Vector(viewMatrix[0], viewMatrix[4], viewMatrix[8])
-        val localForward = Vector(viewMatrix[2], viewMatrix[6], viewMatrix[10])
-        translationVector += localUp * dUp * touchFactor
-        translationVector += localRight * -dRight * touchFactor
-        translationVector += localForward * -dForward * touchFactor
-        dRight = 0f
-        dUp = 0f
-        dForward = 0f
+    fun updateCameraZoom(zoomStrength: Float) {
+        val forwardShift = (cameraTarget - cameraPos).normalize() * zoomStrength * touchFactor * zoomFactor
+        cameraPos += forwardShift
+        cameraTarget += forwardShift
     }
 }
