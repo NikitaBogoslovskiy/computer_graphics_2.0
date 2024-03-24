@@ -87,7 +87,6 @@ class Cube(private var sideLength: Float = 1.5f,
     }
 
     override fun draw(vPMatrix: FloatArray) {
-        GLES20.glDisable(GLES20.GL_CULL_FACE)
         Matrix.multiplyMM(mvpMatrix, 0, vPMatrix, 0, modelMatrix, 0)
         val posLoc = GLES20.glGetAttribLocation(program, "position")
         val colLoc = GLES20.glGetUniformLocation(program, "color")
