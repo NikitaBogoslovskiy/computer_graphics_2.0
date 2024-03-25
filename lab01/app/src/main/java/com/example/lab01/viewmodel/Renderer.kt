@@ -3,47 +3,35 @@ package com.example.lab01.viewmodel
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
-import com.example.lab01.model.shapes.Cube
-import com.example.lab01.model.shapes.RegularPolygon
-import com.example.lab01.model.shapes.Shape
-import com.example.lab01.model.shapes.Square
-import com.example.lab01.model.shapes.TexturedSquare
-import com.example.lab01.model.shapes.Triangle
+import com.example.lab01.model.scenes.Platform
+//import com.example.lab01.model.scenes.Platform
+import com.example.lab01.model.scenes.Scene
+import com.example.lab01.model.scenes.Scene2d
+import com.example.lab01.model.scenes.Scene2d3d
 import com.example.lab01.utils.Camera
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
-import kotlin.concurrent.Volatile
 
 
 class Renderer : GLSurfaceView.Renderer {
     val camera = Camera()
     private val vPMatrix = FloatArray(16)
     private val projectionMatrix = FloatArray(16)
-
-    private lateinit var square: Shape
-    private lateinit var triangle: Shape
-    private lateinit var pentagon: Shape
-    private lateinit var cube: Shape
-    private lateinit var texturedSquare: Shape
+    private lateinit var scene: Scene
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
-        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
-        camera.isEnabled = false
-        square = Square()
-        triangle = Triangle()
-        pentagon = RegularPolygon(5)
-        cube = Cube()
-        texturedSquare = TexturedSquare()
+        GLES20.glEnable(GLES20.GL_DEPTH_TEST)
+        //camera.isEnabled = false
+        //scene = Scene2d()
+        //scene = Scene2d3d()
+        scene = Platform()
     }
 
     override fun onDrawFrame(unused: GL10) {
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
+        GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT or GLES20.GL_COLOR_BUFFER_BIT)
         Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, camera.getViewMatrix(), 0)
-        //square.draw(vPMatrix)
-        //triangle.draw(vPMatrix)
-        pentagon.draw(vPMatrix)
-        cube.draw(vPMatrix)
-        texturedSquare.draw(vPMatrix)
+        scene.draw(vPMatrix)
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {

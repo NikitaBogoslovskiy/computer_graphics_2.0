@@ -15,7 +15,7 @@ class SurfaceView(context: Context) : GLSurfaceView(context) {
         setEGLContextClientVersion(2)
         renderer = Renderer()
         setRenderer(renderer)
-        renderMode = RENDERMODE_WHEN_DIRTY;
+        //renderMode = RENDERMODE_WHEN_DIRTY;
     }
 
     override fun onTouchEvent(e: MotionEvent): Boolean {

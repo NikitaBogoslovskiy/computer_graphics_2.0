@@ -5,6 +5,8 @@ import android.opengl.Matrix
 import com.example.lab01.model.shaders.BASE_FRAGMENT_SHADER
 import com.example.lab01.model.shaders.BASE_VERTEX_SHADER
 import com.example.lab01.model.utility.loadShader
+import com.example.lab01.utils.Pipeline
+import com.example.lab01.utils.Vector
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -15,6 +17,7 @@ val cubeColor = floatArrayOf(0.5f, 0.5f, 0f, 1f)
 class Cube(private var sideLength: Float = 1.5f,
            private var color: FloatArray = cubeColor) : Shape {
 
+    var pipeline = Pipeline()
     private var modelMatrix = FloatArray(16)
     private val mvpMatrix = FloatArray(16)
     //Vertices coordinates
@@ -52,8 +55,6 @@ class Cube(private var sideLength: Float = 1.5f,
 
     init {
         Matrix.setIdentityM(modelMatrix, 0)
-        Matrix.translateM(modelMatrix, 0, 0f, 0f, -3f);
-        Matrix.rotateM(modelMatrix, 0, -45f, 1f, 1f, 0f)
     }
 
     private fun getCoordinates(): FloatArray {
@@ -87,6 +88,10 @@ class Cube(private var sideLength: Float = 1.5f,
     }
 
     override fun draw(vPMatrix: FloatArray) {
+        if (!pipeline.hasExecutedUnique) {
+            pipeline.executeUnique(modelMatrix)
+        }
+        pipeline.executeRepeatable(modelMatrix)
         Matrix.multiplyMM(mvpMatrix, 0, vPMatrix, 0, modelMatrix, 0)
         val posLoc = GLES20.glGetAttribLocation(program, "position")
         val colLoc = GLES20.glGetUniformLocation(program, "color")
