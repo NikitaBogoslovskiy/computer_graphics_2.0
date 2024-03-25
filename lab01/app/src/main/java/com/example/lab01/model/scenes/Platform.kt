@@ -1,34 +1,40 @@
 package com.example.lab01.model.scenes
 
+import com.example.lab01.Dependencies
 import com.example.lab01.model.shapes.Cube
+import com.example.lab01.model.utility.PlatformModeEnum
 import com.example.lab01.utils.Vector
 import com.example.lab01.utils.addRotation
 import com.example.lab01.utils.addTranslation
-
-enum class PlatformMode {
-    STATIC, CUBE_SELF_ROTATION, PLATFORM_SELF_ROTATION, PLATFORM_ROTATION
-}
+import java.util.concurrent.atomic.AtomicBoolean
 
 class Platform : Scene {
     private var redCube = Cube(1.5f, floatArrayOf(1f, 0f, 0f, 1f))
     private var greenCube = Cube(1.5f, floatArrayOf(0f, 1f, 0f, 1f))
     private var blueCube = Cube(1.5f, floatArrayOf(0f, 0f, 1f, 1f))
     private var yellowCube = Cube(1.5f, floatArrayOf(1f, 1f, 0f, 1f))
+    private var needSwitchMode = AtomicBoolean()
 
     init {
-        switchMode(PlatformMode.CUBE_SELF_ROTATION)
+        Dependencies.platformMode.addCallback { needSwitchMode.set(true) }
+        needSwitchMode.set(true)
     }
 
-    fun switchMode(mode: PlatformMode) {
+    private fun switchMode() {
         reset()
-        when (mode) {
-            PlatformMode.STATIC -> {
+        when (Dependencies.platformMode.get()) {
+            PlatformModeEnum.STATIC -> {
                 setStaticPipeline()
             }
-            PlatformMode.CUBE_SELF_ROTATION -> {
+            PlatformModeEnum.CUBE_SELF_ROTATION -> {
                 setCubeSelfRotationPipeline()
             }
-            else -> {}
+            PlatformModeEnum.PLATFORM_SELF_ROTATION -> {
+                setPlatformSelfRotationPipeline()
+            }
+            PlatformModeEnum.PLATFORM_ROTATION -> {
+                setPlatformRotationPipeline()
+            }
         }
     }
 
@@ -81,15 +87,56 @@ class Platform : Scene {
             function = ::addTranslation)
     }
 
-    fun setPlatformSelfRotationPipeline() {
+    private fun setPlatformSelfRotationPipeline() {
+        setStaticPipeline()
 
+        redCube.pipeline.addRepeatable(Vector(-3f, 0f, 0f),
+            function = ::addTranslation)
+        greenCube.pipeline.addRepeatable(Vector(-3f, 0f, 0f),
+            function = ::addTranslation)
+        blueCube.pipeline.addRepeatable(Vector(-3f, 0f, 0f),
+            function = ::addTranslation)
+        yellowCube.pipeline.addRepeatable(Vector(-3f, 0f, 0f),
+            function = ::addTranslation)
+
+        redCube.pipeline.addRepeatable(1f, Vector(0f, 1f, 0f),
+            function = ::addRotation)
+        greenCube.pipeline.addRepeatable(1f, Vector(0f, 1f, 0f),
+            function = ::addRotation)
+        blueCube.pipeline.addRepeatable(1f, Vector(0f, 1f, 0f),
+            function = ::addRotation)
+        yellowCube.pipeline.addRepeatable(1f, Vector(0f, 1f, 0f),
+            function = ::addRotation)
+
+        redCube.pipeline.addRepeatable(Vector(3f, 0f, 0f),
+            function = ::addTranslation)
+        greenCube.pipeline.addRepeatable(Vector(3f, 0f, 0f),
+            function = ::addTranslation)
+        blueCube.pipeline.addRepeatable(Vector(3f, 0f, 0f),
+            function = ::addTranslation)
+        yellowCube.pipeline.addRepeatable(Vector(3f, 0f, 0f),
+            function = ::addTranslation)
     }
 
-    fun setPlatformRotationPipeline() {
+    private fun setPlatformRotationPipeline() {
+        setStaticPipeline()
 
+        redCube.pipeline.addRepeatable(1f, Vector(0f, 1f, 0f),
+            function = ::addRotation)
+        greenCube.pipeline.addRepeatable(1f, Vector(0f, 1f, 0f),
+            function = ::addRotation)
+        blueCube.pipeline.addRepeatable(1f, Vector(0f, 1f, 0f),
+            function = ::addRotation)
+        yellowCube.pipeline.addRepeatable(1f, Vector(0f, 1f, 0f),
+            function = ::addRotation)
     }
 
     override fun draw(vPMatrix: FloatArray) {
+        if (needSwitchMode.get()) {
+            switchMode()
+            needSwitchMode.set(false)
+        }
+
         redCube.draw(vPMatrix)
         greenCube.draw(vPMatrix)
         blueCube.draw(vPMatrix)

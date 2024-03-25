@@ -21,10 +21,10 @@ class Renderer : GLSurfaceView.Renderer {
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
         GLES20.glEnable(GLES20.GL_DEPTH_TEST)
-        //camera.isEnabled = false
+        camera.disable()
         //scene = Scene2d()
-        //scene = Scene2d3d()
-        scene = Platform()
+        scene = Scene2d3d()
+        //scene = Platform()
     }
 
     override fun onDrawFrame(unused: GL10) {

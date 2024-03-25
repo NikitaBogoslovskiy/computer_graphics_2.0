@@ -5,8 +5,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 class Camera {
-    var isEnabled = true
-
+    private var isEnabled = true
     private var cameraPos = Vector(0.0f, 0.0f, 3.0f);
     private var cameraTarget = Vector(0.0f, 0.0f, 0.0f);
     private var cameraUp = Vector(0.0f, 1.0f, 0.0f);
@@ -20,6 +19,14 @@ class Camera {
 
     init {
         updateViewMatrix()
+    }
+
+    fun enable() {
+        isEnabled = true
+    }
+
+    fun disable() {
+        isEnabled = false
     }
 
     private fun updateViewMatrix() {

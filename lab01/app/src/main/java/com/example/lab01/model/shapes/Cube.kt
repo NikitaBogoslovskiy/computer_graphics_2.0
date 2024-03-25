@@ -88,10 +88,7 @@ class Cube(private var sideLength: Float = 1.5f,
     }
 
     override fun draw(vPMatrix: FloatArray) {
-        if (!pipeline.hasExecutedUnique) {
-            pipeline.executeUnique(modelMatrix)
-        }
-        pipeline.executeRepeatable(modelMatrix)
+        pipeline.execute(modelMatrix)
         Matrix.multiplyMM(mvpMatrix, 0, vPMatrix, 0, modelMatrix, 0)
         val posLoc = GLES20.glGetAttribLocation(program, "position")
         val colLoc = GLES20.glGetUniformLocation(program, "color")

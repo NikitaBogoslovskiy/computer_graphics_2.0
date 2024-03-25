@@ -13,10 +13,10 @@ class Scene2d3d : Scene {
     private var texturedSquare = TexturedSquare()
 
     init {
-        cube.pipeline.addUnique(Vector(0f, 0f, -3f),
-            function = ::addTranslation)
         cube.pipeline.addUnique(-45f, Vector(1f, 1f, 0f),
             function = ::addRotation)
+        cube.pipeline.addUnique(Vector(0f, 0f, -3f),
+            function = ::addTranslation)
     }
 
     override fun draw(vPMatrix: FloatArray) {

@@ -1,10 +1,10 @@
 package com.example.lab01.view
 
 import android.content.pm.ActivityInfo
-import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
+import com.example.lab01.Dependencies
 
 class AppActivity : ComponentActivity() {
     private lateinit var view: SurfaceView
@@ -18,14 +18,14 @@ class AppActivity : ComponentActivity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
-            // Do something
+            Dependencies.platformMode.next()
         }
         return true
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-            // Do something
+            Dependencies.platformMode.prev()
         }
         return true
     }
