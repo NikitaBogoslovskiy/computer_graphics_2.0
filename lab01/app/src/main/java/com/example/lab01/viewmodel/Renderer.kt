@@ -3,6 +3,7 @@ package com.example.lab01.viewmodel
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
+import android.widget.SeekBar
 import com.example.lab01.model.scenes.Platform
 //import com.example.lab01.model.scenes.Platform
 import com.example.lab01.model.scenes.Scene
@@ -21,10 +22,10 @@ class Renderer : GLSurfaceView.Renderer {
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
         GLES20.glEnable(GLES20.GL_DEPTH_TEST)
-        camera.disable()
+        //camera.disable()
         //scene = Scene2d()
-        scene = Scene2d3d()
-        //scene = Platform()
+        //scene = Scene2d3d()
+        scene = Platform()
     }
 
     override fun onDrawFrame(unused: GL10) {

@@ -1,6 +1,12 @@
 package com.example.lab01.model.scenes
 
+import android.app.Activity
+import android.app.Application
+import android.widget.SeekBar
+import android.widget.Toast
 import com.example.lab01.Dependencies
+import com.example.lab01.R
+import com.example.lab01.model.light.PointLight
 import com.example.lab01.model.shapes.Cube
 import com.example.lab01.model.utility.PlatformModeEnum
 import com.example.lab01.utils.Vector
@@ -8,16 +14,50 @@ import com.example.lab01.utils.addRotation
 import com.example.lab01.utils.addTranslation
 import java.util.concurrent.atomic.AtomicBoolean
 
+
 class Platform : Scene {
-    private var redCube = Cube(1.5f, floatArrayOf(1f, 0f, 0f, 1f))
-    private var greenCube = Cube(1.5f, floatArrayOf(0f, 1f, 0f, 1f))
-    private var blueCube = Cube(1.5f, floatArrayOf(0f, 0f, 1f, 1f))
-    private var yellowCube = Cube(1.5f, floatArrayOf(1f, 1f, 0f, 1f))
+    private var redCube: Cube
+    private var greenCube: Cube
+    private var blueCube: Cube
+    private var yellowCube: Cube
     private var needSwitchMode = AtomicBoolean()
 
     init {
         Dependencies.platformMode.addCallback { needSwitchMode.set(true) }
         needSwitchMode.set(true)
+        Dependencies.initPointLight(PointLight())
+
+        redCube = Cube(1.5f, floatArrayOf(1f, 0f, 0f, 1f))
+        greenCube = Cube(1.5f, floatArrayOf(0f, 1f, 0f, 1f))
+        blueCube = Cube(1.5f, floatArrayOf(0f, 0f, 1f, 1f))
+        yellowCube = Cube(1.5f, floatArrayOf(1f, 1f, 0f, 1f))
+/*        val bar1 = Dependencies.activity.findViewById<SeekBar>(R.id.seekBar1)
+        bar1.progress = (redCube.color[0] * 100).toInt()
+        bar1.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                redCube.color[0] = progress / 100f
+            }
+        })
+        val bar2 = Dependencies.activity.findViewById<SeekBar>(R.id.seekBar2)
+        bar2.progress = (redCube.color[1] * 100).toInt()
+        bar2.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                redCube.color[1] = progress / 100f
+            }
+        })
+        val bar3 = Dependencies.activity.findViewById<SeekBar>(R.id.seekBar3)
+        bar3.progress = (redCube.color[2] * 100).toInt()
+        bar3.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                redCube.color[2] = progress / 100f
+            }
+        })*/
     }
 
     private fun switchMode() {

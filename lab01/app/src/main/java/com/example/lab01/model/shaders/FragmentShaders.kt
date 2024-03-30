@@ -35,3 +35,15 @@ const val TEXTURED_FRAGMENT_SHADER =
             }
         }
     """
+
+const val LIGHT_FRAGMENT_SHADER =
+    """
+        precision mediump float;
+        uniform vec4 color;
+        uniform float ambientValue;
+        uniform vec4 lightColor;
+        
+        void main() {
+           gl_FragColor = ambientValue * lightColor * color;
+        }
+    """

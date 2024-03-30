@@ -4,16 +4,21 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.databinding.DataBindingUtil
 import com.example.lab01.Dependencies
+import com.example.lab01.R
+import com.example.lab01.databinding.AppActivityBinding
+import com.example.lab01.model.light.PointLight
+import android.view.View.GONE
+import kotlinx.coroutines.withContext
 
 class AppActivity : ComponentActivity() {
-    private lateinit var view: SurfaceView
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-        view = SurfaceView(this)
-        setContentView(view)
+        Dependencies.activity = this
+        setContentView(R.layout.app_activity)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

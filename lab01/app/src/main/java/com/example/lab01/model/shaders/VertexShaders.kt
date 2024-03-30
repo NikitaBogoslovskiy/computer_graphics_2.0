@@ -33,3 +33,13 @@ const val TEXTURED_VERTEX_SHADER =
             gl_Position = uMVPMatrix * a_position;
         }
     """
+
+const val LIGHT_VERTEX_SHADER =
+    """
+        uniform mat4 uMVPMatrix;
+        attribute vec4 position;
+        
+        void main() {
+            gl_Position = uMVPMatrix * position;
+        }
+    """
