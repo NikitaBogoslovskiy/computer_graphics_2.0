@@ -46,8 +46,10 @@ const val LIGHT_VERTEX_SHADER =
         uniform mat4 modelInvT;
         uniform mat4 view;
         uniform mat4 projection;
+        
         attribute vec3 position;
         attribute vec3 a_normal;
+        
         varying vec3 v_normal;
         varying vec3 frag_position;
         

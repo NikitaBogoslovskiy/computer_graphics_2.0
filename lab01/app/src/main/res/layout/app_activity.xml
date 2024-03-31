@@ -22,27 +22,16 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/lightPanel"
-            android:layout_width="191dp"
-            android:layout_height="110dp"
+            android:layout_width="192dp"
+            android:layout_height="91dp"
             android:background="@drawable/layout_bg"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.029"
+            app:layout_constraintHorizontal_bias="0.015"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.946">
-
-            <SeekBar
-                android:id="@+id/ambientSeekBar"
-                android:layout_width="152dp"
-                android:layout_height="29dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.926"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.1" />
+            app:layout_constraintVertical_bias="0.97">
 
             <SeekBar
                 android:id="@+id/diffuseSeekBar"
@@ -50,10 +39,21 @@
                 android:layout_height="29dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.926"
+                app:layout_constraintHorizontal_bias="0.69"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5" />
+                app:layout_constraintVertical_bias="0.525" />
+
+            <SeekBar
+                android:id="@+id/ambientSeekBar"
+                android:layout_width="152dp"
+                android:layout_height="29dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.69"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.118" />
 
             <SeekBar
                 android:id="@+id/specularSeekBar"
@@ -61,10 +61,10 @@
                 android:layout_height="29dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.926"
+                app:layout_constraintHorizontal_bias="0.69"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.9" />
+                app:layout_constraintVertical_bias="0.915" />
 
             <TextView
                 android:id="@+id/ambientText"
@@ -72,27 +72,13 @@
                 android:layout_height="wrap_content"
                 android:text="A"
                 android:textColor="#BFFFFFFF"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.12"
+                app:layout_constraintHorizontal_bias="0.093"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.096" />
-
-            <TextView
-                android:id="@+id/diffuseText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="D"
-                android:textColor="#BFFFFFFF"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.12"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.506" />
+                app:layout_constraintVertical_bias="0.125" />
 
             <TextView
                 android:id="@+id/specularText"
@@ -100,13 +86,27 @@
                 android:layout_height="wrap_content"
                 android:text="S"
                 android:textColor="#BFFFFFFF"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.12"
+                app:layout_constraintHorizontal_bias="0.093"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.879" />
+                app:layout_constraintVertical_bias="0.87" />
+
+            <TextView
+                android:id="@+id/diffuseText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="D"
+                android:textColor="#BFFFFFFF"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.093"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.515" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

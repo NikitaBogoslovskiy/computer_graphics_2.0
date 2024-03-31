@@ -39,6 +39,7 @@ const val TEXTURED_FRAGMENT_SHADER =
 const val LIGHT_FRAGMENT_SHADER =
     """
         precision mediump float;
+        
         uniform vec4 color;
         uniform float ambient_value;
         uniform float diffuse_value;
@@ -46,6 +47,7 @@ const val LIGHT_FRAGMENT_SHADER =
         uniform vec4 light_color;
         uniform vec3 light_position;
         uniform vec3 camera_position;
+        
         varying vec3 v_normal;
         varying vec3 frag_position;
         
