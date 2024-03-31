@@ -49,13 +49,16 @@ class Square(private var coordinates: FloatArray = squareCoordinates,
         Matrix.translateM(modelMatrix, 0, 0.5f, -0.5f, 0f);
     }
 
-    override fun draw(vPMatrix: FloatArray) {
-        Matrix.multiplyMM(mvpMatrix, 0, vPMatrix, 0, modelMatrix, 0)
+    override fun draw(view: FloatArray, projection: FloatArray) {
         val posLoc = GLES20.glGetAttribLocation(program, "position")
         val colLoc = GLES20.glGetUniformLocation(program, "color")
-        val mvpMatrixLoc = GLES20.glGetUniformLocation(program, "uMVPMatrix")
+        val modelLoc = GLES20.glGetUniformLocation(program, "model")
+        val viewLoc = GLES20.glGetUniformLocation(program, "view")
+        val projectionLoc = GLES20.glGetUniformLocation(program, "projection")
         GLES20.glUseProgram(program)
-        GLES20.glUniformMatrix4fv(mvpMatrixLoc, 1, false, mvpMatrix, 0)
+        GLES20.glUniformMatrix4fv(modelLoc, 1, false, modelMatrix, 0)
+        GLES20.glUniformMatrix4fv(viewLoc, 1, false, view, 0)
+        GLES20.glUniformMatrix4fv(projectionLoc, 1, false, projection, 0)
         GLES20.glVertexAttribPointer(
             posLoc,
             coordinatesPerVertex,

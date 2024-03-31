@@ -31,8 +31,7 @@ class Renderer : GLSurfaceView.Renderer {
     override fun onDrawFrame(unused: GL10) {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT or GLES20.GL_COLOR_BUFFER_BIT)
-        Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, camera.getViewMatrix(), 0)
-        scene.draw(vPMatrix)
+        scene.draw(camera.getViewMatrix(), projectionMatrix)
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {

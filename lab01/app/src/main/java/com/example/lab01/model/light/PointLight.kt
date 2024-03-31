@@ -10,9 +10,10 @@ enum class PointLightMode {
 }
 
 class PointLight {
-    var ambientLevel = ObservableInt(100)
+    var ambientLevel = ObservableInt(30)
     var intensityLevel = ObservableInt(100)
     var color = floatArrayOf(1f, 1f, 1f, 1f)
+    var position = floatArrayOf(0f, 0f, 0f)
     private var mode = PointLightMode.LINEAR
 
     init {
@@ -27,7 +28,7 @@ class PointLight {
         })
 
         val ambientSeekBar = Dependencies.activity.findViewById<SeekBar>(R.id.ambientSeekBar)
-        ambientSeekBar.progress = intensityLevel.get()
+        ambientSeekBar.progress = ambientLevel.get()
         ambientSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}

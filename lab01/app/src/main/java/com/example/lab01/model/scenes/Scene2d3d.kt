@@ -19,9 +19,9 @@ class Scene2d3d : Scene {
             function = ::addTranslation)
     }
 
-    override fun draw(vPMatrix: FloatArray) {
-        pentagon.draw(vPMatrix)
-        cube.draw(vPMatrix)
-        texturedSquare.draw(vPMatrix)
+    override fun draw(view: FloatArray, projection: FloatArray) {
+        pentagon.draw(view, projection)
+        cube.draw(view, projection)
+        texturedSquare.draw(view, projection)
     }
 }

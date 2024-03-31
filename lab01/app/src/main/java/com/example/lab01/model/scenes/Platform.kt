@@ -26,6 +26,7 @@ class Platform : Scene {
         Dependencies.platformMode.addCallback { needSwitchMode.set(true) }
         needSwitchMode.set(true)
         Dependencies.initPointLight(PointLight())
+        Dependencies.pointLight?.position = floatArrayOf(-5f, 5f, 3f)
 
         redCube = Cube(1.5f, floatArrayOf(1f, 0f, 0f, 1f))
         greenCube = Cube(1.5f, floatArrayOf(0f, 1f, 0f, 1f))
@@ -171,15 +172,15 @@ class Platform : Scene {
             function = ::addRotation)
     }
 
-    override fun draw(vPMatrix: FloatArray) {
+    override fun draw(view: FloatArray, projection: FloatArray) {
         if (needSwitchMode.get()) {
             switchMode()
             needSwitchMode.set(false)
         }
 
-        redCube.draw(vPMatrix)
-        greenCube.draw(vPMatrix)
-        blueCube.draw(vPMatrix)
-        yellowCube.draw(vPMatrix)
+        redCube.draw(view, projection)
+        greenCube.draw(view, projection)
+        blueCube.draw(view, projection)
+        yellowCube.draw(view, projection)
     }
 }

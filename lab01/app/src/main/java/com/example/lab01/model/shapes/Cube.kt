@@ -20,39 +20,106 @@ val cubeColor = floatArrayOf(0.5f, 0.5f, 0f, 1f)
 class Cube(private var sideLength: Float = 1.5f,
            var color: FloatArray = cubeColor) : Shape {
 
+    //Model pipeline
     var pipeline = Pipeline()
     private var modelMatrix = FloatArray(16)
-    private val mvpMatrix = FloatArray(16)
-    //Vertices coordinates
-    private val coordinates = getCoordinates()
-    private val indices = shortArrayOf(0, 2, 3, 0, 1, 3, 4, 6, 7, 4, 5, 7, 8, 9, 10, 11, 8, 10, 12,
-        13, 14, 15, 12, 14, 16, 17, 18, 16, 19, 18, 20, 21, 22, 20, 23, 22);
-    private val vertexBuffer: FloatBuffer =
-        ByteBuffer.allocateDirect(coordinates.size * Float.SIZE_BYTES).run {
-            order(ByteOrder.nativeOrder())
-            asFloatBuffer().apply {
-                put(coordinates)
-                position(0)
-            }
-        }
-    private val indicesBuffer: ShortBuffer =
-        ByteBuffer.allocateDirect(indices.size * Short.SIZE_BYTES).run {
-            order(ByteOrder.nativeOrder())
-            asShortBuffer().apply {
-                put(indices)
-                position(0)
-            }
-        }
 
-    //Shaders, program and drawing pipeline
-    private val coordinatesPerVertex = 6
+    //Raw data
+    private var halfSide = sideLength / 2
+    private val data = floatArrayOf(
+        -halfSide, -halfSide, -halfSide,  0.0f,  0.0f, -1.0f,
+        halfSide, -halfSide, -halfSide,  0.0f,  0.0f, -1.0f,
+        halfSide,  halfSide, -halfSide,  0.0f,  0.0f, -1.0f,
+        halfSide,  halfSide, -halfSide,  0.0f,  0.0f, -1.0f,
+        -halfSide,  halfSide, -halfSide,  0.0f,  0.0f, -1.0f,
+        -halfSide, -halfSide, -halfSide,  0.0f,  0.0f, -1.0f,
+
+        -halfSide, -halfSide,  halfSide,  0.0f,  0.0f, 1.0f,
+        halfSide, -halfSide,  halfSide,  0.0f,  0.0f, 1.0f,
+        halfSide,  halfSide,  halfSide,  0.0f,  0.0f, 1.0f,
+        halfSide,  halfSide,  halfSide,  0.0f,  0.0f, 1.0f,
+        -halfSide,  halfSide,  halfSide,  0.0f,  0.0f, 1.0f,
+        -halfSide, -halfSide,  halfSide,  0.0f,  0.0f, 1.0f,
+
+        -halfSide,  halfSide,  halfSide, -1.0f,  0.0f,  0.0f,
+        -halfSide,  halfSide, -halfSide, -1.0f,  0.0f,  0.0f,
+        -halfSide, -halfSide, -halfSide, -1.0f,  0.0f,  0.0f,
+        -halfSide, -halfSide, -halfSide, -1.0f,  0.0f,  0.0f,
+        -halfSide, -halfSide,  halfSide, -1.0f,  0.0f,  0.0f,
+        -halfSide,  halfSide,  halfSide, -1.0f,  0.0f,  0.0f,
+
+        halfSide,  halfSide,  halfSide,  1.0f,  0.0f,  0.0f,
+        halfSide,  halfSide, -halfSide,  1.0f,  0.0f,  0.0f,
+        halfSide, -halfSide, -halfSide,  1.0f,  0.0f,  0.0f,
+        halfSide, -halfSide, -halfSide,  1.0f,  0.0f,  0.0f,
+        halfSide, -halfSide,  halfSide,  1.0f,  0.0f,  0.0f,
+        halfSide,  halfSide,  halfSide,  1.0f,  0.0f,  0.0f,
+
+        -halfSide, -halfSide, -halfSide,  0.0f, -1.0f,  0.0f,
+        halfSide, -halfSide, -halfSide,  0.0f, -1.0f,  0.0f,
+        halfSide, -halfSide,  halfSide,  0.0f, -1.0f,  0.0f,
+        halfSide, -halfSide,  halfSide,  0.0f, -1.0f,  0.0f,
+        -halfSide, -halfSide,  halfSide,  0.0f, -1.0f,  0.0f,
+        -halfSide, -halfSide, -halfSide,  0.0f, -1.0f,  0.0f,
+
+        -halfSide,  halfSide, -halfSide,  0.0f,  1.0f,  0.0f,
+        halfSide,  halfSide, -halfSide,  0.0f,  1.0f,  0.0f,
+        halfSide,  halfSide,  halfSide,  0.0f,  1.0f,  0.0f,
+        halfSide,  halfSide,  halfSide,  0.0f,  1.0f,  0.0f,
+        -halfSide,  halfSide,  halfSide,  0.0f,  1.0f,  0.0f,
+        -halfSide,  halfSide, -halfSide,  0.0f,  1.0f,  0.0f
+    )
+
+    //Processed data
+    private val coordinatesPerVertex = 3
+    private val coordinatesPerNormal = 3
+    private val coordinatesPerPoint = coordinatesPerVertex + coordinatesPerNormal
+    private val pointsCount = data.size / coordinatesPerPoint
     private val vertexStride: Int = coordinatesPerVertex * Float.SIZE_BYTES
-    private val vertexCount = coordinates.size / coordinatesPerVertex
+    private val normalStride: Int = coordinatesPerNormal * Float.SIZE_BYTES
+    private lateinit var vertices: FloatArray
+    private lateinit var normals: FloatArray
+    private lateinit var vertexBuffer: FloatBuffer
+    private lateinit var normalBuffer: FloatBuffer
+
+    private fun processData() {
+        val vertexList = emptyList<Float>().toMutableList()
+        val normalList = emptyList<Float>().toMutableList()
+        for (pointIdx in 0 until pointsCount) {
+            vertexList.add(data[pointIdx * coordinatesPerPoint])
+            vertexList.add(data[pointIdx * coordinatesPerPoint + 1])
+            vertexList.add(data[pointIdx * coordinatesPerPoint + 2])
+            normalList.add(data[pointIdx * coordinatesPerPoint + 3])
+            normalList.add(data[pointIdx * coordinatesPerPoint + 4])
+            normalList.add(data[pointIdx * coordinatesPerPoint + 5])
+        }
+        vertices = vertexList.toFloatArray()
+        normals = normalList.toFloatArray()
+        vertexBuffer =
+            ByteBuffer.allocateDirect(vertices.size * Float.SIZE_BYTES).run {
+                order(ByteOrder.nativeOrder())
+                asFloatBuffer().apply {
+                    put(vertices)
+                    position(0)
+                }
+            }
+        normalBuffer =
+            ByteBuffer.allocateDirect(normals.size * Float.SIZE_BYTES).run {
+                order(ByteOrder.nativeOrder())
+                asFloatBuffer().apply {
+                    put(normals)
+                    position(0)
+                }
+            }
+    }
+
+    //Shaders
     private var vertexShader: Int
     private var fragmentShader: Int
     private var program: Int
 
     init {
+        processData()
         Matrix.setIdentityM(modelMatrix, 0)
         if (Dependencies.pointLight == null) {
             vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, BASE_VERTEX_SHADER)
@@ -68,64 +135,20 @@ class Cube(private var sideLength: Float = 1.5f,
         }
     }
 
-    private fun getCoordinates(): FloatArray {
-        val halfSide = sideLength / 2
-        return floatArrayOf(
-            -halfSide, -halfSide, -halfSide,  0.0f,  0.0f, -1.0f,
-            halfSide, -halfSide, -halfSide,  0.0f,  0.0f, -1.0f,
-            halfSide,  halfSide, -halfSide,  0.0f,  0.0f, -1.0f,
-            halfSide,  halfSide, -halfSide,  0.0f,  0.0f, -1.0f,
-            -halfSide,  halfSide, -halfSide,  0.0f,  0.0f, -1.0f,
-            -halfSide, -halfSide, -halfSide,  0.0f,  0.0f, -1.0f,
-
-            -halfSide, -halfSide,  halfSide,  0.0f,  0.0f, 1.0f,
-            halfSide, -halfSide,  halfSide,  0.0f,  0.0f, 1.0f,
-            halfSide,  halfSide,  halfSide,  0.0f,  0.0f, 1.0f,
-            halfSide,  halfSide,  halfSide,  0.0f,  0.0f, 1.0f,
-            -halfSide,  halfSide,  halfSide,  0.0f,  0.0f, 1.0f,
-            -halfSide, -halfSide,  halfSide,  0.0f,  0.0f, 1.0f,
-
-            -halfSide,  halfSide,  halfSide, -1.0f,  0.0f,  0.0f,
-            -halfSide,  halfSide, -halfSide, -1.0f,  0.0f,  0.0f,
-            -halfSide, -halfSide, -halfSide, -1.0f,  0.0f,  0.0f,
-            -halfSide, -halfSide, -halfSide, -1.0f,  0.0f,  0.0f,
-            -halfSide, -halfSide,  halfSide, -1.0f,  0.0f,  0.0f,
-            -halfSide,  halfSide,  halfSide, -1.0f,  0.0f,  0.0f,
-
-            halfSide,  halfSide,  halfSide,  1.0f,  0.0f,  0.0f,
-            halfSide,  halfSide, -halfSide,  1.0f,  0.0f,  0.0f,
-            halfSide, -halfSide, -halfSide,  1.0f,  0.0f,  0.0f,
-            halfSide, -halfSide, -halfSide,  1.0f,  0.0f,  0.0f,
-            halfSide, -halfSide,  halfSide,  1.0f,  0.0f,  0.0f,
-            halfSide,  halfSide,  halfSide,  1.0f,  0.0f,  0.0f,
-
-            -halfSide, -halfSide, -halfSide,  0.0f, -1.0f,  0.0f,
-            halfSide, -halfSide, -halfSide,  0.0f, -1.0f,  0.0f,
-            halfSide, -halfSide,  halfSide,  0.0f, -1.0f,  0.0f,
-            halfSide, -halfSide,  halfSide,  0.0f, -1.0f,  0.0f,
-            -halfSide, -halfSide,  halfSide,  0.0f, -1.0f,  0.0f,
-            -halfSide, -halfSide, -halfSide,  0.0f, -1.0f,  0.0f,
-
-            -halfSide,  halfSide, -halfSide,  0.0f,  1.0f,  0.0f,
-            halfSide,  halfSide, -halfSide,  0.0f,  1.0f,  0.0f,
-            halfSide,  halfSide,  halfSide,  0.0f,  1.0f,  0.0f,
-            halfSide,  halfSide,  halfSide,  0.0f,  1.0f,  0.0f,
-            -halfSide,  halfSide,  halfSide,  0.0f,  1.0f,  0.0f,
-            -halfSide,  halfSide, -halfSide,  0.0f,  1.0f,  0.0f
-        )
-    }
-
-    override fun draw(vPMatrix: FloatArray) {
+    override fun draw(view: FloatArray, projection: FloatArray) {
         pipeline.execute(modelMatrix)
-        Matrix.multiplyMM(mvpMatrix, 0, vPMatrix, 0, modelMatrix, 0)
         val posLoc = GLES20.glGetAttribLocation(program, "position")
         val colLoc = GLES20.glGetUniformLocation(program, "color")
-        val mvpMatrixLoc = GLES20.glGetUniformLocation(program, "uMVPMatrix")
+        val modelLoc = GLES20.glGetUniformLocation(program, "model")
+        val viewLoc = GLES20.glGetUniformLocation(program, "view")
+        val projectionLoc = GLES20.glGetUniformLocation(program, "projection")
         GLES20.glUseProgram(program)
-        GLES20.glUniformMatrix4fv(mvpMatrixLoc, 1, false, mvpMatrix, 0)
+        GLES20.glUniformMatrix4fv(modelLoc, 1, false, modelMatrix, 0)
+        GLES20.glUniformMatrix4fv(viewLoc, 1, false, view, 0)
+        GLES20.glUniformMatrix4fv(projectionLoc, 1, false, projection, 0)
         GLES20.glVertexAttribPointer(
             posLoc,
-            coordinatesPerVertex / 2,
+            coordinatesPerVertex,
             GLES20.GL_FLOAT,
             false,
             vertexStride,
@@ -133,13 +156,33 @@ class Cube(private var sideLength: Float = 1.5f,
         )
         GLES20.glUniform4fv(colLoc, 1, color, 0)
         if (Dependencies.pointLight != null) {
-            val lightColLoc = GLES20.glGetUniformLocation(program, "lightColor")
-            val ambientValueLoc = GLES20.glGetUniformLocation(program, "ambientValue")
+            val modelInvTLoc = GLES20.glGetUniformLocation(program, "modelInvT")
+            val lightColLoc = GLES20.glGetUniformLocation(program, "light_color")
+            val lightPositionLoc = GLES20.glGetUniformLocation(program, "light_position")
+            val ambientValueLoc = GLES20.glGetUniformLocation(program, "ambient_value")
+            val intensityValueLoc = GLES20.glGetUniformLocation(program, "intensity_value")
+            val normalLoc = GLES20.glGetAttribLocation(program, "a_normal")
+            val modelInv = FloatArray(16)
+            val modelInvT = FloatArray(16)
+            Matrix.invertM(modelInv, 0, modelMatrix, 0)
+            Matrix.transposeM(modelInvT, 0, modelInv, 0)
+            GLES20.glUniformMatrix4fv(modelInvTLoc, 1, false, modelInvT, 0)
             GLES20.glUniform4fv(lightColLoc, 1, Dependencies.pointLight!!.color, 0)
+            GLES20.glUniform3fv(lightPositionLoc, 1, Dependencies.pointLight!!.position, 0)
             GLES20.glUniform1f(ambientValueLoc, Dependencies.pointLight!!.getAmbientValue())
+            GLES20.glUniform1f(intensityValueLoc, Dependencies.pointLight!!.getIntensityValue())
+            GLES20.glVertexAttribPointer(
+                normalLoc,
+                coordinatesPerNormal,
+                GLES20.GL_FLOAT,
+                false,
+                normalStride,
+                normalBuffer
+            )
+            GLES20.glEnableVertexAttribArray(normalLoc)
         }
         GLES20.glEnableVertexAttribArray(posLoc)
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, pointsCount);
         GLES20.glDisableVertexAttribArray(posLoc)
     }
 }

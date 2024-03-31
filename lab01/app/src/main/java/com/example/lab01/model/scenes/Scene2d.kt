@@ -8,8 +8,8 @@ class Scene2d : Scene {
     private var square: Square = Square()
     private var triangle: Triangle = Triangle()
 
-    override fun draw(vPMatrix: FloatArray) {
-        square.draw(vPMatrix)
-        triangle.draw(vPMatrix)
+    override fun draw(view: FloatArray, projection: FloatArray) {
+        square.draw(view, projection)
+        triangle.draw(view, projection)
     }
 }

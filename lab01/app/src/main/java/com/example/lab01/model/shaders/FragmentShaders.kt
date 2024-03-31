@@ -40,10 +40,21 @@ const val LIGHT_FRAGMENT_SHADER =
     """
         precision mediump float;
         uniform vec4 color;
-        uniform float ambientValue;
-        uniform vec4 lightColor;
+        uniform float ambient_value;
+        uniform float intensity_value;
+        uniform vec4 light_color;
+        uniform vec3 light_position;
+        varying vec3 v_normal;
+        varying vec3 frag_position;
         
         void main() {
-           gl_FragColor = ambientValue * lightColor * color;
+           vec3 ambient = vec3(ambient_value * light_color);
+                   
+           vec3 norm = normalize(v_normal);
+           vec3 light_dir = normalize(light_position - frag_position); 
+           float diff = max(dot(norm, light_dir), 0.0);
+           vec3 diffuse = vec3(intensity_value * diff * light_color);
+           
+           gl_FragColor = vec4(ambient + diffuse, 1.0) * color;
         }
     """

@@ -11,6 +11,7 @@ import com.example.lab01.R
 import com.example.lab01.databinding.AppActivityBinding
 import com.example.lab01.model.light.PointLight
 import android.view.View.GONE
+import android.widget.Switch
 import kotlinx.coroutines.withContext
 
 class AppActivity : ComponentActivity() {
