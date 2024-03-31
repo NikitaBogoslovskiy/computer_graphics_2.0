@@ -1,6 +1,7 @@
 package com.example.lab01.utils
 
 import android.view.MotionEvent
+import com.example.lab01.Dependencies.camera
 import com.example.lab01.view.SurfaceView
 import kotlin.math.acos
 import kotlin.math.max
@@ -34,7 +35,7 @@ class MultitouchManager(private var view: SurfaceView) {
                     if (isSingleMode) {
                         val x0 = e.getX(0)
                         val y0 = e.getY(0)
-                        view.renderer.camera.updateCameraPosition(x0 - previousX0, y0 - previousY0)
+                        camera.updateCameraPosition(x0 - previousX0, y0 - previousY0)
                         view.requestRender()
                         previousX0 = x0
                         previousY0 = y0
@@ -50,9 +51,9 @@ class MultitouchManager(private var view: SurfaceView) {
                         val newDistance = Point(x0, y0).distanceTo(Point(x1, y1))
                         val angle = degrees(acos(dir1.dot(dir2) / (dir1.length() * dir2.length())))
                         if (angle < 60) {
-                            view.renderer.camera.updateCameraDirection(dir1.x, dir1.y)
+                            camera.updateCameraDirection(dir1.x, dir1.y)
                         } else {
-                            view.renderer.camera.updateCameraZoom(
+                            camera.updateCameraZoom(
                                 sign(newDistance - oldDistance) * max(dir1.length(), dir2.length())
                             )
                         }

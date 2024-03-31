@@ -26,39 +26,12 @@ class Platform : Scene {
         Dependencies.platformMode.addCallback { needSwitchMode.set(true) }
         needSwitchMode.set(true)
         Dependencies.initPointLight(PointLight())
-        Dependencies.pointLight?.position = floatArrayOf(-5f, 5f, 3f)
+        Dependencies.pointLight?.position = floatArrayOf(-4f, 3f, 1f)
 
         redCube = Cube(1.5f, floatArrayOf(1f, 0f, 0f, 1f))
         greenCube = Cube(1.5f, floatArrayOf(0f, 1f, 0f, 1f))
         blueCube = Cube(1.5f, floatArrayOf(0f, 0f, 1f, 1f))
         yellowCube = Cube(1.5f, floatArrayOf(1f, 1f, 0f, 1f))
-/*        val bar1 = Dependencies.activity.findViewById<SeekBar>(R.id.seekBar1)
-        bar1.progress = (redCube.color[0] * 100).toInt()
-        bar1.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                redCube.color[0] = progress / 100f
-            }
-        })
-        val bar2 = Dependencies.activity.findViewById<SeekBar>(R.id.seekBar2)
-        bar2.progress = (redCube.color[1] * 100).toInt()
-        bar2.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                redCube.color[1] = progress / 100f
-            }
-        })
-        val bar3 = Dependencies.activity.findViewById<SeekBar>(R.id.seekBar3)
-        bar3.progress = (redCube.color[2] * 100).toInt()
-        bar3.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                redCube.color[2] = progress / 100f
-            }
-        })*/
     }
 
     private fun switchMode() {

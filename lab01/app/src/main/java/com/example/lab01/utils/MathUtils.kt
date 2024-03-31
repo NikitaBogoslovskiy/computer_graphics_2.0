@@ -42,6 +42,8 @@ data class Vector(var x: Float = 0f,
         val l = length()
         return Vector(x / l, y / l, z / l)
     }
+
+    fun toFloatArray() = floatArrayOf(x, y, z)
 }
 
 private const val MULTIPLIER = (PI / 180).toFloat()

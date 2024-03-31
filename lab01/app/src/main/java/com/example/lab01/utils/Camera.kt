@@ -29,6 +29,8 @@ class Camera {
         isEnabled = false
     }
 
+    fun getPosition() = cameraPos
+
     private fun updateViewMatrix() {
         Matrix.setLookAtM(viewMatrix, 0,
             cameraPos.x, cameraPos.y, cameraPos.z,

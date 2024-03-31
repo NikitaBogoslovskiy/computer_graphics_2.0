@@ -4,6 +4,7 @@ import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.widget.SeekBar
+import com.example.lab01.Dependencies.camera
 import com.example.lab01.model.scenes.Platform
 //import com.example.lab01.model.scenes.Platform
 import com.example.lab01.model.scenes.Scene
@@ -15,8 +16,6 @@ import javax.microedition.khronos.opengles.GL10
 
 
 class Renderer : GLSurfaceView.Renderer {
-    val camera = Camera()
-    private val vPMatrix = FloatArray(16)
     private val projectionMatrix = FloatArray(16)
     private lateinit var scene: Scene
 
