@@ -98,16 +98,18 @@ class PointLight {
 
     private fun enableLight() {
         active = true
+        Dependencies.activity.findViewById<ConstraintLayout>(R.id.settingsPanel).visibility = View.VISIBLE
         Dependencies.activity.findViewById<ConstraintLayout>(R.id.lightPanel).visibility = View.VISIBLE
-        Dependencies.activity.findViewById<ToggleButton>(R.id.modelToggle).visibility = View.VISIBLE
-        Dependencies.activity.findViewById<ToggleButton>(R.id.shadingToggle).visibility = View.VISIBLE
+/*        Dependencies.activity.findViewById<ToggleButton>(R.id.modelToggle).visibility = View.VISIBLE
+        Dependencies.activity.findViewById<ToggleButton>(R.id.shadingToggle).visibility = View.VISIBLE*/
     }
 
     private fun disableLight() {
         active = false
+        Dependencies.activity.findViewById<ConstraintLayout>(R.id.settingsPanel).visibility = View.GONE
         Dependencies.activity.findViewById<ConstraintLayout>(R.id.lightPanel).visibility = View.GONE
-        Dependencies.activity.findViewById<ToggleButton>(R.id.modelToggle).visibility = View.GONE
-        Dependencies.activity.findViewById<ToggleButton>(R.id.shadingToggle).visibility = View.GONE
+/*        Dependencies.activity.findViewById<ToggleButton>(R.id.modelToggle).visibility = View.GONE
+        Dependencies.activity.findViewById<ToggleButton>(R.id.shadingToggle).visibility = View.GONE*/
     }
 
     private fun setLambertModel() {

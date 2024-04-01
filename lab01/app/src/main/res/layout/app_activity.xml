@@ -110,53 +110,98 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <ToggleButton
-            android:id="@+id/modelToggle"
-            android:layout_width="72dp"
-            android:layout_height="25dp"
-            android:layout_marginEnd="632dp"
-            android:background="#A653575C"
-            android:backgroundTintMode="multiply"
-            android:textColor="#CBFFFFFF"
-            android:textColorHighlight="#00FFE1"
-            android:textColorLink="#00FFFF"
-            android:textOff="Lambert"
-            android:textOn="Phong"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lightSwitch"
-            app:layout_constraintVertical_bias="0.04" />
-
-        <ToggleButton
-            android:id="@+id/shadingToggle"
-            android:layout_width="72dp"
-            android:layout_height="25dp"
-            android:layout_marginEnd="632dp"
-            android:background="#A653575C"
-            android:backgroundTintMode="multiply"
-            android:textColor="#CBFFFFFF"
-            android:textColorHighlight="#00FFE1"
-            android:textColorLink="#00FFFF"
-            android:textOff="Gouraud"
-            android:textOn="Phong"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/modelToggle"
-            app:layout_constraintVertical_bias="0.036"
-            tools:text="Shading" />
-
         <Switch
             android:id="@+id/lightSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="60dp"
+            android:layout_height="29dp"
+            android:textAlignment="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.039"
+            app:layout_constraintHorizontal_bias="0.023"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.041" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/settingsPanel"
+            android:layout_width="74dp"
+            android:layout_height="105dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lightSwitch">
+
+            <ToggleButton
+                android:id="@+id/modelToggle"
+                android:layout_width="75dp"
+                android:layout_height="25dp"
+                android:background="#A653575C"
+                android:backgroundTintMode="multiply"
+                android:textColor="#CBFFFFFF"
+                android:textColorHighlight="#00FFE1"
+                android:textColorLink="#00FFFF"
+                android:textOff="Lambert"
+                android:textOn="Phong"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.287" />
+
+            <ToggleButton
+                android:id="@+id/shadingToggle"
+                android:layout_width="74dp"
+                android:layout_height="23dp"
+                android:background="#A653575C"
+                android:backgroundTintMode="multiply"
+                android:textColor="#CBFFFFFF"
+                android:textColorHighlight="#00FFE1"
+                android:textColorLink="#00FFFF"
+                android:textOff="Gouraud"
+                android:textOn="Phong"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0"
+                tools:text="Shading" />
+
+            <TextView
+                android:id="@+id/modelText"
+                android:layout_width="75dp"
+                android:layout_height="23dp"
+                android:text="Model"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="#CEFFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/shadingText"
+                android:layout_width="74dp"
+                android:layout_height="22dp"
+                android:text="Shading"
+                android:textAlignment="center"
+                android:textColor="#CEFFFFFF"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.722" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
