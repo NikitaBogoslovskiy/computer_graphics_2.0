@@ -3,10 +3,13 @@ package com.example.lab01.model.shapes
 import android.opengl.GLES20
 import android.opengl.Matrix
 import com.example.lab01.Dependencies
+import com.example.lab01.model.light.LightShading
 import com.example.lab01.model.shaders.BASE_FRAGMENT_SHADER
 import com.example.lab01.model.shaders.BASE_VERTEX_SHADER
-import com.example.lab01.model.shaders.LIGHT_FRAGMENT_SHADER
-import com.example.lab01.model.shaders.LIGHT_VERTEX_SHADER
+import com.example.lab01.model.shaders.GOURAUD_FRAGMENT_SHADER
+import com.example.lab01.model.shaders.GOURAUD_VERTEX_SHADER
+import com.example.lab01.model.shaders.PHONG_FRAGMENT_SHADER
+import com.example.lab01.model.shaders.PHONG_VERTEX_SHADER
 import com.example.lab01.model.utility.loadShader
 import com.example.lab01.utils.Pipeline
 import com.example.lab01.utils.Vector
@@ -114,29 +117,40 @@ class Cube(private var sideLength: Float = 1.5f,
     }
 
     //Shaders
-    private var vertexShader: Int
-    private var fragmentShader: Int
-    private var program: Int
+    private var lightOffProgram: Int
+    private var gouraudProgram: Int
+    private var phongProgram: Int
 
     init {
         processData()
         Matrix.setIdentityM(modelMatrix, 0)
-        if (Dependencies.pointLight == null) {
-            vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, BASE_VERTEX_SHADER)
-            fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, BASE_FRAGMENT_SHADER)
-        } else {
-            vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, LIGHT_VERTEX_SHADER)
-            fragmentShader = loadShader(GLES20.GL_FRAGMENT_SHADER, LIGHT_FRAGMENT_SHADER)
+        lightOffProgram = GLES20.glCreateProgram().also {
+            GLES20.glAttachShader(it, loadShader(GLES20.GL_VERTEX_SHADER, BASE_VERTEX_SHADER))
+            GLES20.glAttachShader(it, loadShader(GLES20.GL_FRAGMENT_SHADER, BASE_FRAGMENT_SHADER))
+            GLES20.glLinkProgram(it)
         }
-        program = GLES20.glCreateProgram().also {
-            GLES20.glAttachShader(it, vertexShader)
-            GLES20.glAttachShader(it, fragmentShader)
+        phongProgram = GLES20.glCreateProgram().also {
+            GLES20.glAttachShader(it, loadShader(GLES20.GL_VERTEX_SHADER, PHONG_VERTEX_SHADER))
+            GLES20.glAttachShader(it, loadShader(GLES20.GL_FRAGMENT_SHADER, PHONG_FRAGMENT_SHADER))
+            GLES20.glLinkProgram(it)
+        }
+        gouraudProgram = GLES20.glCreateProgram().also {
+            GLES20.glAttachShader(it, loadShader(GLES20.GL_VERTEX_SHADER, GOURAUD_VERTEX_SHADER))
+            GLES20.glAttachShader(it, loadShader(GLES20.GL_FRAGMENT_SHADER, GOURAUD_FRAGMENT_SHADER))
             GLES20.glLinkProgram(it)
         }
     }
 
     override fun draw(view: FloatArray, projection: FloatArray) {
         pipeline.execute(modelMatrix)
+        val program = if (!Dependencies.pointLight.active) {
+            lightOffProgram
+        } else {
+            when(Dependencies.pointLight.shading) {
+                LightShading.GOURAUD -> gouraudProgram
+                LightShading.PHONG -> phongProgram
+            }
+        }
         val posLoc = GLES20.glGetAttribLocation(program, "position")
         val colLoc = GLES20.glGetUniformLocation(program, "color")
         val modelLoc = GLES20.glGetUniformLocation(program, "model")
@@ -155,7 +169,8 @@ class Cube(private var sideLength: Float = 1.5f,
             vertexBuffer
         )
         GLES20.glUniform4fv(colLoc, 1, color, 0)
-        if (Dependencies.pointLight != null) {
+        if (Dependencies.pointLight.active) {
+            val modelTypeLoc = GLES20.glGetUniformLocation(program, "model_type")
             val modelInvTLoc = GLES20.glGetUniformLocation(program, "modelInvT")
             val lightColLoc = GLES20.glGetUniformLocation(program, "light_color")
             val lightPositionLoc = GLES20.glGetUniformLocation(program, "light_position")
@@ -168,12 +183,13 @@ class Cube(private var sideLength: Float = 1.5f,
             val modelInvT = FloatArray(16)
             Matrix.invertM(modelInv, 0, modelMatrix, 0)
             Matrix.transposeM(modelInvT, 0, modelInv, 0)
+            GLES20.glUniform1i(modelTypeLoc, Dependencies.pointLight.model.toInt())
             GLES20.glUniformMatrix4fv(modelInvTLoc, 1, false, modelInvT, 0)
-            GLES20.glUniform4fv(lightColLoc, 1, Dependencies.pointLight!!.color, 0)
-            GLES20.glUniform3fv(lightPositionLoc, 1, Dependencies.pointLight!!.position, 0)
-            GLES20.glUniform1f(ambientValueLoc, Dependencies.pointLight!!.getAmbientValue())
-            GLES20.glUniform1f(diffuseValueLoc, Dependencies.pointLight!!.getDiffuseValue())
-            GLES20.glUniform1f(specularValueLoc, Dependencies.pointLight!!.getSpecularValue())
+            GLES20.glUniform4fv(lightColLoc, 1, Dependencies.pointLight.color, 0)
+            GLES20.glUniform3fv(lightPositionLoc, 1, Dependencies.pointLight.position, 0)
+            GLES20.glUniform1f(ambientValueLoc, Dependencies.pointLight.getAmbientValue())
+            GLES20.glUniform1f(diffuseValueLoc, Dependencies.pointLight.getDiffuseValue())
+            GLES20.glUniform1f(specularValueLoc, Dependencies.pointLight.getSpecularValue())
             GLES20.glUniform3fv(cameraPositionLoc, 1, Dependencies.camera.getPosition().toFloatArray(), 0)
             GLES20.glVertexAttribPointer(
                 normalLoc,

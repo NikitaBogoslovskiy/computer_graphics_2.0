@@ -40,7 +40,56 @@ const val TEXTURED_VERTEX_SHADER =
         }
     """
 
-const val LIGHT_VERTEX_SHADER =
+const val GOURAUD_VERTEX_SHADER =
+    """
+        uniform mat4 model;
+        uniform mat4 modelInvT;
+        uniform mat4 view;
+        uniform mat4 projection;
+        
+        uniform int model_type; 
+        uniform float ambient_value;
+        uniform float diffuse_value;
+        uniform float specular_value;
+        uniform vec4 light_color;
+        uniform vec3 light_position;
+        uniform vec3 camera_position;
+        
+        attribute vec3 position;
+        attribute vec3 a_normal;
+        
+        varying vec3 combined_light;
+        
+        void main() {
+            gl_Position =  projection * view * model * vec4(position, 1.0);
+            
+            vec3 position = vec3(model * vec4(position, 1.0));
+            vec3 normal = mat3(modelInvT) * a_normal;
+            
+            vec3 combined_light_t = vec3(0.0);
+            
+            vec3 norm = normalize(normal);
+            vec3 light_dir = normalize(light_position - position); 
+            float diff = max(dot(norm, light_dir), 0.0);
+            vec3 diffuse = vec3(diffuse_value * diff * light_color);
+            combined_light_t += diffuse;
+            
+            if (model_type == 1) {
+               vec3 ambient = vec3(ambient_value * light_color);
+               
+               vec3 view_dir = normalize(camera_position - position);
+               vec3 reflect_dir = reflect(-light_dir, norm);
+               float spec = pow(max(dot(view_dir, reflect_dir), 0.0), 64.0);
+               vec3 specular = vec3(specular_value * spec * light_color); 
+               
+               combined_light_t += ambient + specular;
+            }
+            
+            combined_light = combined_light_t;
+        }
+    """
+
+const val PHONG_VERTEX_SHADER =
     """
         uniform mat4 model;
         uniform mat4 modelInvT;

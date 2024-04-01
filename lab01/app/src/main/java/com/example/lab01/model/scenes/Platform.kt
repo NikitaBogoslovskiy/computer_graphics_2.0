@@ -25,8 +25,8 @@ class Platform : Scene {
     init {
         Dependencies.platformMode.addCallback { needSwitchMode.set(true) }
         needSwitchMode.set(true)
-        Dependencies.initPointLight(PointLight())
-        Dependencies.pointLight?.position = floatArrayOf(-4f, 3f, 1f)
+        //Dependencies.pointLight.enable()
+        Dependencies.pointLight.position = floatArrayOf(-4f, 3f, 1f)
 
         redCube = Cube(1.5f, floatArrayOf(1f, 0f, 0f, 1f))
         greenCube = Cube(1.5f, floatArrayOf(0f, 1f, 0f, 1f))

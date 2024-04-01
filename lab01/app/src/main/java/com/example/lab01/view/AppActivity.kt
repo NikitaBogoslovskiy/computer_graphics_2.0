@@ -16,9 +16,10 @@ import kotlinx.coroutines.withContext
 
 class AppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         Dependencies.activity = this
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.app_activity)
+        Dependencies.pointLight = PointLight()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
     }
 

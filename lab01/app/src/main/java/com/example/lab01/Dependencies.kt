@@ -10,11 +10,6 @@ import com.example.lab01.utils.Camera
 object Dependencies {
     var platformMode = PlatformMode()
     lateinit var activity: ComponentActivity
-    var pointLight: PointLight? = null
+    lateinit var pointLight: PointLight
     val camera = Camera()
-
-    fun initPointLight(newLight: PointLight) {
-        pointLight = newLight
-        activity.findViewById<ConstraintLayout>(R.id.lightPanel).visibility = View.VISIBLE
-    }
 }
