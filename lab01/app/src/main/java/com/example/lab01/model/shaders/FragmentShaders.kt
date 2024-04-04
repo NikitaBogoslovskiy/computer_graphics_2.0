@@ -58,6 +58,9 @@ const val PHONG_FRAGMENT_SHADER =
         uniform float ambient_value;
         uniform float diffuse_value;
         uniform float specular_value;
+        uniform float k0;
+        uniform float k1;
+        uniform float k2;
         uniform vec4 light_color;
         uniform vec3 light_position;
         uniform vec3 camera_position;
@@ -69,7 +72,8 @@ const val PHONG_FRAGMENT_SHADER =
            vec3 combined_light = vec3(0.0);
            
            vec3 norm = normalize(v_normal);
-           vec3 light_dir = normalize(light_position - frag_position); 
+           vec3 light_vec = light_position - frag_position;
+           vec3 light_dir = normalize(light_vec); 
            float diff = max(dot(norm, light_dir), 0.0);
            vec3 diffuse = vec3(diffuse_value * diff * light_color);
            combined_light += diffuse;
@@ -85,6 +89,9 @@ const val PHONG_FRAGMENT_SHADER =
                combined_light += ambient + specular;
            }
            
-           gl_FragColor = vec4(combined_light, 1.0) * color;
+           float dist = length(light_vec);
+           float attenuation = 1.0 / (k0 + k1 * dist + k2 * dist * dist);
+           
+           gl_FragColor = vec4(attenuation * combined_light, 1.0) * color;
         }
     """

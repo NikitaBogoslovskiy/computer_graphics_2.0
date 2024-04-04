@@ -9,10 +9,6 @@ import androidx.databinding.ObservableInt
 import com.example.lab01.Dependencies
 import com.example.lab01.R
 
-enum class PointLightMode {
-    LINEAR, QUADRATIC
-}
-
 enum class LightShading {
     GOURAUD, PHONG
 }
@@ -28,11 +24,17 @@ class PointLight {
     var shading = LightShading.PHONG
     var model = LightModel.PHONG
     var ambientLevel = ObservableInt(10)
-    var diffuseLevel = ObservableInt(100)
+    var diffuseLevel = ObservableInt(70)
     var specularLevel = ObservableInt(100)
+    var k0Level = ObservableInt(100)
+    var k1Level = ObservableInt(0)
+    var k2Level = ObservableInt(0)
     var color = floatArrayOf(1f, 1f, 1f, 1f)
     var position = floatArrayOf(0f, 0f, 0f)
-    private var mode = PointLightMode.LINEAR
+
+    private val lightPanel: ConstraintLayout = Dependencies.activity.findViewById(R.id.lightPanel)
+    private val settingsPanel: ConstraintLayout = Dependencies.activity.findViewById(R.id.settingsPanel)
+    private val lightSwitch: Switch = Dependencies.activity.findViewById(R.id.lightSwitch)
 
     init {
         val ambientSeekBar = Dependencies.activity.findViewById<SeekBar>(R.id.ambientSeekBar)
@@ -65,8 +67,37 @@ class PointLight {
             }
         })
 
-        val lightSwitch = Dependencies.activity.findViewById<Switch>(R.id.lightSwitch)
-        disableLight()
+        val k0SeekBar = Dependencies.activity.findViewById<SeekBar>(R.id.k0SeekBar)
+        k0SeekBar.progress = k0Level.get()
+        k0SeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                k0Level.set(progress)
+            }
+        })
+
+        val k1SeekBar = Dependencies.activity.findViewById<SeekBar>(R.id.k1SeekBar)
+        k1SeekBar.progress = k1Level.get()
+        k1SeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                k1Level.set(progress)
+            }
+        })
+
+        val k2SeekBar = Dependencies.activity.findViewById<SeekBar>(R.id.k2SeekBar)
+        k2SeekBar.progress = k2Level.get()
+        k2SeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                k2Level.set(progress)
+            }
+        })
+
+        enableLight()
         lightSwitch.isChecked = active
         lightSwitch.setOnCheckedChangeListener { _, isChecked ->
             when(isChecked) {
@@ -94,22 +125,45 @@ class PointLight {
                 false -> setGouraudShading()
             }
         }
+
+        val showMoreToggle = Dependencies.activity.findViewById<ToggleButton>(R.id.showMoreToggle)
+        showMoreToggle.isChecked = true
+        lightPanel.translationX = -lightPanel.width.toFloat()
+        settingsPanel.translationX = -settingsPanel.width.toFloat()
+        lightSwitch.translationX = -lightSwitch.width.toFloat()
+        openSettings()
+        showMoreToggle.setOnCheckedChangeListener { _, isChecked ->
+            when(isChecked) {
+                true -> openSettings()
+                false -> hideSettings()
+            }
+        }
+    }
+
+    private fun openSettings() {
+        lightPanel.visibility = View.VISIBLE
+        settingsPanel.visibility = View.VISIBLE
+        lightSwitch.visibility = View.VISIBLE
+        lightPanel.animate().translationX(0f)
+        settingsPanel.animate().translationX(0f)
+        lightSwitch.animate().translationX(0f)
+    }
+
+    private fun hideSettings() {
+        lightPanel.visibility = View.GONE
+        settingsPanel.visibility = View.GONE
+        lightSwitch.visibility = View.GONE
+        lightPanel.animate().translationX(-lightPanel.width.toFloat())
+        settingsPanel.animate().translationX(-settingsPanel.width.toFloat())
+        lightSwitch.animate().translationX(-lightSwitch.width.toFloat())
     }
 
     private fun enableLight() {
         active = true
-        Dependencies.activity.findViewById<ConstraintLayout>(R.id.settingsPanel).visibility = View.VISIBLE
-        Dependencies.activity.findViewById<ConstraintLayout>(R.id.lightPanel).visibility = View.VISIBLE
-/*        Dependencies.activity.findViewById<ToggleButton>(R.id.modelToggle).visibility = View.VISIBLE
-        Dependencies.activity.findViewById<ToggleButton>(R.id.shadingToggle).visibility = View.VISIBLE*/
     }
 
     private fun disableLight() {
         active = false
-        Dependencies.activity.findViewById<ConstraintLayout>(R.id.settingsPanel).visibility = View.GONE
-        Dependencies.activity.findViewById<ConstraintLayout>(R.id.lightPanel).visibility = View.GONE
-/*        Dependencies.activity.findViewById<ToggleButton>(R.id.modelToggle).visibility = View.GONE
-        Dependencies.activity.findViewById<ToggleButton>(R.id.shadingToggle).visibility = View.GONE*/
     }
 
     private fun setLambertModel() {
@@ -132,18 +186,15 @@ class PointLight {
         shading = LightShading.PHONG
     }
 
-    fun getAmbientValue() = when(mode) {
-        PointLightMode.LINEAR -> ambientLevel.get() / 100f
-        PointLightMode.QUADRATIC -> ambientLevel.get() * ambientLevel.get() / 10000f
-    }
+    fun getAmbientValue() = ambientLevel.get() / 100f
 
-    fun getDiffuseValue() = when(mode) {
-        PointLightMode.LINEAR -> diffuseLevel.get() / 100f
-        PointLightMode.QUADRATIC -> diffuseLevel.get() * diffuseLevel.get() / 10000f
-    }
+    fun getDiffuseValue() = diffuseLevel.get() / 100f
 
-    fun getSpecularValue() = when(mode) {
-        PointLightMode.LINEAR -> specularLevel.get() / 100f
-        PointLightMode.QUADRATIC -> specularLevel.get() * specularLevel.get() / 10000f
-    }
+    fun getSpecularValue() = specularLevel.get() / 100f
+
+    fun getK0Value() = k0Level.get() / 100f
+
+    fun getK1Value() = k1Level.get() / 100f
+
+    fun getK2Value() = k2Level.get() / 100f
 }

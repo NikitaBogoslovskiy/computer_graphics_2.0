@@ -177,6 +177,9 @@ class Cube(private var sideLength: Float = 1.5f,
             val ambientValueLoc = GLES20.glGetUniformLocation(program, "ambient_value")
             val diffuseValueLoc = GLES20.glGetUniformLocation(program, "diffuse_value")
             val specularValueLoc = GLES20.glGetUniformLocation(program, "specular_value")
+            val k0Loc = GLES20.glGetUniformLocation(program, "k0")
+            val k1Loc = GLES20.glGetUniformLocation(program, "k1")
+            val k2Loc = GLES20.glGetUniformLocation(program, "k2")
             val cameraPositionLoc = GLES20.glGetUniformLocation(program, "camera_position")
             val normalLoc = GLES20.glGetAttribLocation(program, "a_normal")
             val modelInv = FloatArray(16)
@@ -190,6 +193,9 @@ class Cube(private var sideLength: Float = 1.5f,
             GLES20.glUniform1f(ambientValueLoc, Dependencies.pointLight.getAmbientValue())
             GLES20.glUniform1f(diffuseValueLoc, Dependencies.pointLight.getDiffuseValue())
             GLES20.glUniform1f(specularValueLoc, Dependencies.pointLight.getSpecularValue())
+            GLES20.glUniform1f(k0Loc, Dependencies.pointLight.getK0Value())
+            GLES20.glUniform1f(k1Loc, Dependencies.pointLight.getK1Value())
+            GLES20.glUniform1f(k2Loc, Dependencies.pointLight.getK2Value())
             GLES20.glUniform3fv(cameraPositionLoc, 1, Dependencies.camera.getPosition().toFloatArray(), 0)
             GLES20.glVertexAttribPointer(
                 normalLoc,
