@@ -24,14 +24,16 @@ val cubeColor = floatArrayOf(0.5f, 0.5f, 0f, 1f)
 
 class Cube(sideLength: Float = 1.5f,
            var color: FloatArray = cubeColor,
-           var textureResourceId: Int = R.drawable.default_texture) : Shape {
+           var textureResourceId1: Int = R.drawable.default_texture,
+           var textureResourceId2: Int = R.drawable.default_texture) : Shape {
 
     //Model pipeline
     var pipeline = Pipeline()
     private var modelMatrix = FloatArray(16)
 
     //Raw data
-    private val textureData: TextureData
+    private val textureData1: TextureData
+    private val textureData2: TextureData
     private var halfSide = sideLength / 2
     private val data = floatArrayOf(
         -halfSide, -halfSide, -halfSide,  0.0f,  0.0f, -1.0f, 1f, 1f,
@@ -144,7 +146,8 @@ class Cube(sideLength: Float = 1.5f,
     private var phongProgram: Int
 
     init {
-        textureData = Dependencies.textureLoader.loadTexture(textureResourceId)
+        textureData1 = Dependencies.textureLoader.loadTexture(textureResourceId1)
+        textureData2 = Dependencies.textureLoader.loadTexture(textureResourceId2)
         processData()
         Matrix.setIdentityM(modelMatrix, 0)
         lightOffProgram = GLES20.glCreateProgram().also {
@@ -187,8 +190,14 @@ class Cube(sideLength: Float = 1.5f,
 
     private fun setTexturesParams(program: Int) {
         val texLoc = GLES20.glGetAttribLocation(program, "a_texture")
-        val textureUnitLoc = GLES20.glGetUniformLocation(program, "texture_unit")
-        GLES20.glUniform1i(textureUnitLoc, textureData.textureNumber)
+        val textureUnit1Loc = GLES20.glGetUniformLocation(program, "texture_unit1")
+        val textureUnit2Loc = GLES20.glGetUniformLocation(program, "texture_unit2")
+        val texture1IntensityLoc = GLES20.glGetUniformLocation(program, "texture1_intensity")
+        val texture2IntensityLoc = GLES20.glGetUniformLocation(program, "texture2_intensity")
+        GLES20.glUniform1i(textureUnit1Loc, textureData1.textureNumber)
+        GLES20.glUniform1i(textureUnit2Loc, textureData2.textureNumber)
+        GLES20.glUniform1f(texture1IntensityLoc, Dependencies.pointLight.getTexture1Intensity())
+        GLES20.glUniform1f(texture2IntensityLoc, Dependencies.pointLight.getTexture2Intensity())
         GLES20.glVertexAttribPointer(
             texLoc,
             coordinatesPerTexture,
@@ -198,8 +207,10 @@ class Cube(sideLength: Float = 1.5f,
             textureBuffer
         )
         GLES20.glEnableVertexAttribArray(texLoc)
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + textureData.textureNumber)
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureData.textureId)
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + textureData1.textureNumber)
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureData1.textureId)
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0 + textureData2.textureNumber)
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureData2.textureId)
     }
 
     private fun setLightParams(program: Int) {

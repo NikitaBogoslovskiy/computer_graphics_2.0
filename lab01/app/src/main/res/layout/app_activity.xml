@@ -24,15 +24,15 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/lightPanel"
             android:layout_width="169dp"
-            android:layout_height="177dp"
+            android:layout_height="217dp"
             android:background="@drawable/layout_bg"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.01"
+            app:layout_constraintHorizontal_bias="0.009"
             app:layout_constraintStart_toEndOf="@+id/showMoreToggle"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0">
+            app:layout_constraintVertical_bias="0.963">
 
             <SeekBar
                 android:id="@+id/ambientSeekBar"
@@ -54,7 +54,7 @@
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.23" />
+                app:layout_constraintVertical_bias="0.179" />
 
             <SeekBar
                 android:id="@+id/specularSeekBar"
@@ -65,7 +65,7 @@
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.41" />
+                app:layout_constraintVertical_bias="0.308" />
 
             <SeekBar
                 android:id="@+id/k0SeekBar"
@@ -77,7 +77,7 @@
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.59" />
+                app:layout_constraintVertical_bias="0.437" />
 
             <SeekBar
                 android:id="@+id/k1SeekBar"
@@ -88,7 +88,7 @@
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.77" />
+                app:layout_constraintVertical_bias="0.566" />
 
             <SeekBar
                 android:id="@+id/k2SeekBar"
@@ -99,7 +99,29 @@
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.95" />
+                app:layout_constraintVertical_bias="0.695" />
+
+            <SeekBar
+                android:id="@+id/texture1SeekBar"
+                android:layout_width="141dp"
+                android:layout_height="26dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.824" />
+
+            <SeekBar
+                android:id="@+id/texture2SeekBar"
+                android:layout_width="141dp"
+                android:layout_height="26dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.953" />
 
             <TextView
                 android:id="@+id/ambientText"
@@ -113,7 +135,7 @@
                 app:layout_constraintHorizontal_bias="0.121"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.075" />
+                app:layout_constraintVertical_bias="0.068" />
 
             <TextView
                 android:id="@+id/diffuseText"
@@ -127,7 +149,7 @@
                 app:layout_constraintHorizontal_bias="0.121"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.245" />
+                app:layout_constraintVertical_bias="0.19" />
 
             <TextView
                 android:id="@+id/specularText"
@@ -141,7 +163,7 @@
                 app:layout_constraintHorizontal_bias="0.12"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.415" />
+                app:layout_constraintVertical_bias="0.313" />
 
             <TextView
                 android:id="@+id/k0Text"
@@ -155,7 +177,7 @@
                 app:layout_constraintHorizontal_bias="0.11"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.585" />
+                app:layout_constraintVertical_bias="0.438" />
 
             <TextView
                 android:id="@+id/k1Text"
@@ -169,7 +191,7 @@
                 app:layout_constraintHorizontal_bias="0.11"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.75" />
+                app:layout_constraintVertical_bias="0.562" />
 
             <TextView
                 android:id="@+id/k2Text"
@@ -183,31 +205,59 @@
                 app:layout_constraintHorizontal_bias="0.11"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.925" />
+                app:layout_constraintVertical_bias="0.686" />
+
+            <TextView
+                android:id="@+id/texture1Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="T1"
+                android:textColor="#BFFFFFFF"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.11"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.81" />
+
+            <TextView
+                android:id="@+id/texture2Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="T2"
+                android:textColor="#BFFFFFFF"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.11"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.93" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Switch
             android:id="@+id/lightSwitch"
-            android:layout_width="60dp"
-            android:layout_height="29dp"
+            android:layout_width="45dp"
+            android:layout_height="28dp"
             android:textAlignment="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/showMoreToggle"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.041" />
+            app:layout_constraintVertical_bias="0.065" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/settingsPanel"
             android:layout_width="156dp"
             android:layout_height="46dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.02"
-            app:layout_constraintStart_toEndOf="@+id/showMoreToggle"
-            app:layout_constraintTop_toBottomOf="@+id/lightSwitch">
+            app:layout_constraintHorizontal_bias="0.016"
+            app:layout_constraintStart_toEndOf="@+id/lightSwitch"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ToggleButton
                 android:id="@+id/modelToggle"

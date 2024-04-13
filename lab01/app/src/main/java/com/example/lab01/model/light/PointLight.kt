@@ -29,6 +29,8 @@ class PointLight {
     var k0Level = ObservableInt(100)
     var k1Level = ObservableInt(0)
     var k2Level = ObservableInt(0)
+    var texture1Level = ObservableInt(50)
+    var texture2Level = ObservableInt(50)
     var color = floatArrayOf(1f, 1f, 1f, 1f)
     var position = floatArrayOf(0f, 0f, 0f)
 
@@ -94,6 +96,26 @@ class PointLight {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 k2Level.set(progress)
+            }
+        })
+
+        val texture1SeekBar = Dependencies.activity.findViewById<SeekBar>(R.id.texture1SeekBar)
+        texture1SeekBar.progress = texture1Level.get()
+        texture1SeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                texture1Level.set(progress)
+            }
+        })
+
+        val texture2SeekBar = Dependencies.activity.findViewById<SeekBar>(R.id.texture2SeekBar)
+        texture2SeekBar.progress = texture2Level.get()
+        texture2SeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                texture2Level.set(progress)
             }
         })
 
@@ -197,4 +219,7 @@ class PointLight {
     fun getK1Value() = k1Level.get() / 100f
 
     fun getK2Value() = k2Level.get() / 100f
+
+    fun getTexture1Intensity() = texture1Level.get() / 100f
+    fun getTexture2Intensity() = texture2Level.get() / 100f
 }
