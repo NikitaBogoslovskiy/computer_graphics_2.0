@@ -5,8 +5,14 @@ const val BASE_VERTEX_SHADER =
         uniform mat4 model;
         uniform mat4 view;
         uniform mat4 projection;
+        
         attribute vec4 position;
+        attribute vec2 a_texture;
+        
+        varying vec2 v_texture;
+        
         void main() {
+            v_texture = a_texture;
             gl_Position = projection * view * model * position;
         }
     """

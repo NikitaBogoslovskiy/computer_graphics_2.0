@@ -4,9 +4,18 @@ const val BASE_FRAGMENT_SHADER =
     """
         precision mediump float;
         uniform vec4 color;
+        uniform sampler2D texture_unit1;
+        uniform sampler2D texture_unit2;
+        uniform float texture1_intensity;
+        uniform float texture2_intensity;
+        
+        varying vec2 v_texture;
         
         void main() {
-           gl_FragColor = color;
+           vec4 texture1 = texture2D(texture_unit1, v_texture);
+           vec4 texture2 = texture2D(texture_unit2, v_texture);
+           vec4 combined_color = mix(color, texture2, texture2.w * texture1_intensity);
+           gl_FragColor = mix(combined_color, texture1, texture1.w * texture2_intensity);
         }
     """
 
