@@ -50,7 +50,11 @@ const val GOURAUD_FRAGMENT_SHADER =
         varying vec3 combined_light;
         
         void main() {
-           gl_FragColor = vec4(combined_light, 1.0) * color;
+           vec4 texture1 = texture2D(texture_unit1, v_texture);
+           vec4 texture2 = texture2D(texture_unit2, v_texture);
+           vec4 combined_color = mix(color, texture2, texture2.w * texture1_intensity);
+           combined_color = mix(combined_color, texture1, texture1.w * texture2_intensity);
+           gl_FragColor = vec4(combined_light * vec3(combined_color), 1.0);
         }
     """
 
@@ -104,7 +108,6 @@ const val PHONG_FRAGMENT_SHADER =
            
            vec4 texture1 = texture2D(texture_unit1, v_texture);
            vec4 texture2 = texture2D(texture_unit2, v_texture);
-           vec4 texture = mix(texture2, texture1, 0.8);
            vec4 combined_color = mix(color, texture2, texture2.w * texture1_intensity);
            combined_color = mix(combined_color, texture1, texture1.w * texture2_intensity);
            

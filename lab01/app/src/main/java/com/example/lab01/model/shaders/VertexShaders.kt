@@ -60,11 +60,14 @@ const val GOURAUD_VERTEX_SHADER =
         
         attribute vec3 position;
         attribute vec3 a_normal;
+        attribute vec2 a_texture;
         
+        varying vec2 v_texture;
         varying vec3 combined_light;
         
         void main() {
             gl_Position =  projection * view * model * vec4(position, 1.0);
+            v_texture = a_texture;
             
             vec3 position = vec3(model * vec4(position, 1.0));
             vec3 normal = mat3(modelInvT) * a_normal;
