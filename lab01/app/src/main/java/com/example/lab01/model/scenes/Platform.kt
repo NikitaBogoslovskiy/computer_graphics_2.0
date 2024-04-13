@@ -28,10 +28,10 @@ class Platform : Scene {
         //Dependencies.pointLight.enable()
         Dependencies.pointLight.position = floatArrayOf(-4f, 3f, 1f)
 
-        redCube = Cube(1.5f, floatArrayOf(1f, 0f, 0f, 1f))
-        greenCube = Cube(1.5f, floatArrayOf(0f, 1f, 0f, 1f))
-        blueCube = Cube(1.5f, floatArrayOf(0f, 0f, 1f, 1f))
-        yellowCube = Cube(1.5f, floatArrayOf(1f, 1f, 0f, 1f))
+        redCube = Cube(1.5f, floatArrayOf(1f, 0f, 0f, 1f), R.drawable.man_texture)
+        greenCube = Cube(1.5f, floatArrayOf(0f, 1f, 0f, 1f), R.drawable.two_texture)
+        blueCube = Cube(1.5f, floatArrayOf(0f, 0f, 1f, 1f), R.drawable.three_texture)
+        yellowCube = Cube(1.5f, floatArrayOf(1f, 1f, 0f, 1f), R.drawable.one_texture)
     }
 
     private fun switchMode() {

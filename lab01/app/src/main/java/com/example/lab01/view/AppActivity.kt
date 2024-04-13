@@ -17,6 +17,7 @@ import kotlinx.coroutines.withContext
 class AppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Dependencies.activity = this
+        Dependencies.context = applicationContext
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_activity)
         Dependencies.pointLight = PointLight()
