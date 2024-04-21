@@ -127,3 +127,26 @@ const val PHONG_VERTEX_SHADER =
             frag_position = vec3(model * vec4(position, 1.0));
         }
     """
+
+const val PHONG_VERTEX_SHADER_WITH_BUMP_MAPPING =
+    """
+        uniform mat4 model;
+        uniform mat4 modelInvT;
+        uniform mat4 view;
+        uniform mat4 projection;
+        
+        attribute vec3 position;
+        attribute vec2 a_texture;
+        attribute vec3 a_normal;
+        
+        varying vec2 v_texture;
+        varying vec3 v_normal;
+        varying vec3 frag_position;
+        
+        void main() {
+            gl_Position =  projection * view * model * vec4(position, 1.0);
+            v_texture = a_texture;
+            v_normal = mat3(modelInvT) * a_normal;
+            frag_position = vec3(model * vec4(position, 1.0));
+        }
+    """
