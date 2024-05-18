@@ -6,8 +6,8 @@ import kotlin.math.sin
 
 class Camera {
     private var isEnabled = true
-    private var cameraPos = Vector(-0.02f, 4.02f, 10.83f);
-    private var cameraTarget = Vector(-0.019f, 4.18f, 9.845f);
+    var cameraPos = Vector(3f, 3f, 3f);
+    var cameraTarget = Vector(0f, 0f, 0f);
     private var cameraUp = Vector(0.0f, 1.0f, 0.0f);
     private var viewMatrix = FloatArray(16)
     private val touchFactor: Float = 0.0065f
@@ -31,7 +31,7 @@ class Camera {
 
     fun getPosition() = cameraPos
 
-    private fun updateViewMatrix() {
+    fun updateViewMatrix() {
         Matrix.setLookAtM(viewMatrix, 0,
             cameraPos.x, cameraPos.y, cameraPos.z,
             cameraTarget.x, cameraTarget.y, cameraTarget.z,

@@ -12,6 +12,7 @@ class Pipeline {
     var hasExecutedUnique = false
     private var unique = ArrayDeque<PipelineNode>()
     private var repeatable = ArrayDeque<PipelineNode>()
+    private var nodes = ArrayDeque<PipelineNode>()
 
     fun addUnique(vararg args: Any, function: Function) {
         unique.addLast(
@@ -27,13 +28,26 @@ class Pipeline {
                 function = function))
     }
 
+    fun add(vararg args: Any, function: Function) {
+        nodes.addLast(
+            PipelineNode(
+                args = args.toList(),
+                function = function))
+    }
+
     fun execute(mat: FloatArray) {
-        if (!hasExecutedUnique) {
+        for (node in nodes) {
+            node.function(mat, node.args)
+        }
+        nodes.clear()
+    }
+
+    fun execute(mat: FloatArray, needToExecuteUnique: Boolean) {
+        if (needToExecuteUnique) {
             Matrix.setIdentityM(mat, 0)
             for (node in unique) {
                 node.function(mat, node.args)
             }
-            hasExecutedUnique = true
         }
 
         for (node in repeatable) {

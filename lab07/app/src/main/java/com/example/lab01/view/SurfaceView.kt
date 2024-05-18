@@ -5,8 +5,8 @@ import android.opengl.GLSurfaceView
 import android.util.AttributeSet
 import android.view.MotionEvent
 import com.example.lab01.Dependencies
+import com.example.lab01.utils.GameInputManager
 import com.example.lab01.utils.MultitouchManager
-import com.example.lab01.utils.SwipeManager
 import com.example.lab01.viewmodel.Renderer
 
 
@@ -16,10 +16,10 @@ class SurfaceView : GLSurfaceView {
 
     val renderer: com.example.lab01.viewmodel.Renderer
     private var multitouchManager = MultitouchManager(this)
-    private var swipeManager = SwipeManager(this)
+    private var gameInputManager = GameInputManager(this)
 
     init {
-        Dependencies.swipeManager = swipeManager
+        Dependencies.gameInputManager = gameInputManager
         setEGLContextClientVersion(2)
         renderer = Renderer()
         setRenderer(renderer)
@@ -27,6 +27,6 @@ class SurfaceView : GLSurfaceView {
     }
 
     override fun onTouchEvent(e: MotionEvent): Boolean {
-        return swipeManager.onTouchEvent(e)
+        return gameInputManager.onTouchEvent(e)
     }
 }

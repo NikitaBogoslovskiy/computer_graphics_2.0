@@ -27,6 +27,10 @@ data class Vector(var x: Float = 0f,
         return Vector(x * scalar, y * scalar, z * scalar)
     }
 
+    operator fun unaryMinus(): Vector {
+        return Vector(-x, -y, -z)
+    }
+
     operator fun times(other: Vector): Vector {
         val newX = y * other.z - z * other.y;
         val newY = z * other.x - x * other.z;

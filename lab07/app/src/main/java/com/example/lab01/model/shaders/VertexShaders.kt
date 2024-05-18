@@ -150,3 +150,44 @@ const val PHONG_VERTEX_SHADER_WITH_BUMP_MAPPING =
             frag_position = vec3(model * vec4(position, 1.0));
         }
     """
+
+const val SKYBOX_VERTEX_SHADER =
+    """
+        uniform mat4 model;
+        uniform mat4 view;
+        uniform mat4 projection;
+        
+        attribute vec4 position;
+        
+        varying vec4 v_texture;
+        
+        void main() {
+            v_texture = position;
+            gl_Position = projection * view * model * position;
+        }
+    """
+
+const val PHONG_VERTEX_SHADER_INSTANCED =
+    """
+        #version 300 es
+        
+        in mat4 model;
+        in mat4 modelInvT;
+        uniform mat4 view;
+        uniform mat4 projection;
+        
+        in vec3 position;
+        in vec2 a_texture;
+        in vec3 a_normal;
+        
+        out vec2 v_texture;
+        out vec3 v_normal;
+        out vec3 frag_position;
+        
+        void main() {
+            gl_Position =  projection * view * model * vec4(position, 1.0);
+            v_texture = a_texture;
+            v_normal = mat3(modelInvT) * a_normal;
+            frag_position = vec3(model * vec4(position, 1.0));
+        }
+    """

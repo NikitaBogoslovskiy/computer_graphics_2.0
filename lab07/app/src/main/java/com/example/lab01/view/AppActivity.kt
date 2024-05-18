@@ -21,7 +21,7 @@ class AppActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_activity)
         Dependencies.pointLight = PointLight()
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

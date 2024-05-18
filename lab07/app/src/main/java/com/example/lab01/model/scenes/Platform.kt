@@ -16,10 +16,10 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 
 class Platform : Scene {
-    private var redCube: Cube
-    private var greenCube: Cube
-    private var blueCube: Cube
-    private var yellowCube: Cube
+    private lateinit var redCube: Cube
+    private lateinit var greenCube: Cube
+    private lateinit var blueCube: Cube
+    private lateinit var yellowCube: Cube
     private var needSwitchMode = AtomicBoolean()
 
     init {
@@ -28,10 +28,10 @@ class Platform : Scene {
         //Dependencies.pointLight.enable()
         Dependencies.pointLight.position = floatArrayOf(-4f, 3f, 1f)
 
-        redCube = Cube(1.5f, floatArrayOf(1f, 0f, 0f, 1f), R.drawable.man_texture, R.drawable.sky_texture)
+/*        redCube = Cube(1.5f, floatArrayOf(1f, 0f, 0f, 1f), R.drawable.man_texture, R.drawable.sky_texture)
         greenCube = Cube(1.5f, floatArrayOf(0f, 1f, 0f, 1f), R.drawable.two_texture, R.drawable.wood_texture)
         blueCube = Cube(1.5f, floatArrayOf(0f, 0f, 1f, 1f), R.drawable.three_texture, R.drawable.ground_texture)
-        yellowCube = Cube(1.5f, floatArrayOf(1f, 1f, 0f, 1f), R.drawable.one_texture, R.drawable.ice_texture)
+        yellowCube = Cube(1.5f, floatArrayOf(1f, 1f, 0f, 1f), R.drawable.one_texture, R.drawable.ice_texture)*/
     }
 
     private fun switchMode() {

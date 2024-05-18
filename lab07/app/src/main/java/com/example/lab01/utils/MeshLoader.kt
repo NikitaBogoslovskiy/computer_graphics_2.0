@@ -1,14 +1,17 @@
 package com.example.lab01.utils
 
-import android.content.Context
 import com.example.lab01.Dependencies
-import com.example.lab01.R
+import java.io.BufferedInputStream
 import java.io.BufferedReader
-import java.io.IOException
+import java.io.FileInputStream
+import java.io.InputStream
 import java.io.InputStreamReader
+import java.nio.ByteBuffer
 
 
-data class MeshData(var vertices: FloatArray, var normals: FloatArray, var textures: FloatArray) {
+data class MeshData(var vertices: FloatArray = FloatArray(0),
+                    var normals: FloatArray = FloatArray(0),
+                    var textures: FloatArray = FloatArray(0)) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -44,7 +47,9 @@ class MeshLoader {
         val reader = BufferedReader(inputStream)
         while (true) {
             val line = reader.readLine() ?: break
-            val parts = line.split(" ".toRegex()).dropLastWhile { it.isEmpty() }
+            if (!line.startsWith("v") && !line.startsWith("f"))
+                continue
+            val parts = line.replace(" +".toRegex(), " ").split(" ".toRegex()).dropLastWhile { it.isEmpty() }
                 .toTypedArray()
             when (parts[0]) {
                 "v" -> {
@@ -72,9 +77,11 @@ class MeshLoader {
                     faces.add(parts[1])
                     faces.add(parts[2])
                     faces.add(parts[3])
-                    faces.add(parts[1])
-                    faces.add(parts[3])
-                    faces.add(parts[4])
+                    if (parts.size > 4) {
+                        faces.add(parts[1])
+                        faces.add(parts[3])
+                        faces.add(parts[4])
+                    }
                 }
             }
         }
@@ -90,15 +97,15 @@ class MeshLoader {
         for (face in faces) {
             val parts = face.split("/".toRegex()).dropLastWhile { it.isEmpty() }
                 .toTypedArray()
-            var index = 3 * (parts[0].toShort() - 1)
+            var index = 3 * (parts[0].toInt() - 1)
             verticesBuffer[verticesIndex++] = vertices.get(index++)
             verticesBuffer[verticesIndex++] = vertices.get(index++)
             verticesBuffer[verticesIndex++] = vertices.get(index)
-            index = 2 * (parts[1].toShort() - 1)
+            index = 2 * (parts[1].toInt() - 1)
             texturesBuffer[normalsIndex++] = textures.get(index++)
             // NOTE: Bitmap gets y-inverted
             texturesBuffer[normalsIndex++] = 1 - textures.get(index)
-            index = 3 * (parts[2].toShort() - 1)
+            index = 3 * (parts[2].toInt() - 1)
             normalsBuffer[texturesIndex++] = normals.get(index++)
             normalsBuffer[texturesIndex++] = normals.get(index++)
             normalsBuffer[texturesIndex++] = normals.get(index)

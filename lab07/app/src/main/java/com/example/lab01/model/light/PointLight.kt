@@ -26,7 +26,7 @@ class PointLight {
     var ambientLevel = ObservableInt(10)
     var diffuseLevel = ObservableInt(70)
     var specularLevel = ObservableInt(100)
-    var k0Level = ObservableInt(100)
+    var k0Level = ObservableInt(50)
     var k1Level = ObservableInt(0)
     var k2Level = ObservableInt(0)
     var texture1Level = ObservableInt(0)

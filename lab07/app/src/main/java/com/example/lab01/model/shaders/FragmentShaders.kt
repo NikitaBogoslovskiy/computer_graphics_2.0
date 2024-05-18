@@ -68,21 +68,18 @@ const val GOURAUD_FRAGMENT_SHADER =
     """
 
 const val PHONG_FRAGMENT_SHADER =
-    """
+    """ 
         precision mediump float;
         
         uniform int model_type; 
         uniform vec4 color;
-        uniform sampler2D texture_unit1;
-        uniform sampler2D texture_unit2;
+        uniform sampler2D texture_unit;
         uniform float ambient_value;
         uniform float diffuse_value;
         uniform float specular_value;
         uniform float k0;
         uniform float k1;
         uniform float k2;
-        uniform float texture1_intensity;
-        uniform float texture2_intensity;
         uniform vec4 light_color;
         uniform vec3 light_position;
         uniform vec3 camera_position;
@@ -115,10 +112,8 @@ const val PHONG_FRAGMENT_SHADER =
            float dist = length(light_vec);
            float attenuation = 1.0 / (k0 + k1 * dist + k2 * dist * dist);
            
-           vec4 texture1 = texture2D(texture_unit1, v_texture);
-           vec4 texture2 = texture2D(texture_unit2, v_texture);
-           vec4 combined_color = mix(color, texture2, texture2.w * texture1_intensity);
-           combined_color = mix(combined_color, texture1, texture1.w * texture2_intensity);
+           vec4 texture = texture2D(texture_unit, v_texture);
+           vec4 combined_color = mix(color, texture, texture.w);
            
            gl_FragColor = vec4(attenuation * combined_light * vec3(combined_color), 1.0);
         }
@@ -194,5 +189,19 @@ const val PHONG_FRAGMENT_SHADER_WITH_BUMP_MAPPING =
            combined_color = mix(combined_color, texture1, texture1.w * texture2_intensity);
            
            gl_FragColor = vec4(attenuation * combined_light * vec3(combined_color), 1.0);
+        }
+    """
+
+const val SKYBOX_FRAGMENT_SHADER =
+    """
+        precision mediump float;
+        
+        uniform samplerCube skybox;
+        
+        varying vec4 v_texture;
+        
+        void main() {
+           mediump vec3 cube = vec3(textureCube(skybox, v_texture.xyz));
+           gl_FragColor = vec4(cube, 1.0);
         }
     """

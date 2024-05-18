@@ -8,7 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.lab01.model.light.PointLight
 import com.example.lab01.model.utility.PlatformMode
 import com.example.lab01.utils.Camera
-import com.example.lab01.utils.SwipeManager
+import com.example.lab01.utils.GameInputManager
 import com.example.lab01.utils.TextureLoader
 
 @SuppressLint("StaticFieldLeak")
@@ -17,7 +17,7 @@ object Dependencies {
     lateinit var activity: ComponentActivity
     lateinit var pointLight: PointLight
     lateinit var context: Context
-    lateinit var swipeManager: SwipeManager
+    lateinit var gameInputManager: GameInputManager
     val camera = Camera()
     val textureLoader = TextureLoader()
 }

@@ -1,0 +1,210 @@
+package com.example.lab01.model.shapes
+
+import android.opengl.GLES30
+import android.opengl.Matrix
+import com.example.lab01.Dependencies
+import com.example.lab01.R
+import com.example.lab01.model.light.LightShading
+import com.example.lab01.model.shaders.BASE_FRAGMENT_SHADER
+import com.example.lab01.model.shaders.BASE_VERTEX_SHADER
+import com.example.lab01.model.shaders.GOURAUD_FRAGMENT_SHADER
+import com.example.lab01.model.shaders.GOURAUD_VERTEX_SHADER
+import com.example.lab01.model.shaders.PHONG_FRAGMENT_SHADER
+import com.example.lab01.model.shaders.PHONG_VERTEX_SHADER
+import com.example.lab01.model.utility.loadShader
+import com.example.lab01.utils.Pipeline
+import com.example.lab01.utils.TextureData
+import com.example.lab01.utils.Vector
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.nio.FloatBuffer
+import java.nio.ShortBuffer
+
+val planeColor = floatArrayOf(0f, 1f, 0f, 1f)
+
+class Plane(sideLength: Float = 1.5f,
+           var color: FloatArray = planeColor,
+           var textureResourceId: Int = R.drawable.default_texture) : Shape {
+
+    //Model pipeline
+    var pipeline = Pipeline()
+    private var modelMatrix = FloatArray(16)
+
+    //Raw data
+    private val textureData: TextureData
+    private var halfSide = sideLength / 2
+    private val data = floatArrayOf(
+        -halfSide,  0f, -halfSide,  0.0f,  1.0f,  0.0f, 0f, 1f,
+        halfSide,  0f, -halfSide,  0.0f,  1.0f,  0.0f, 0f, 0f,
+        halfSide,  0f,  halfSide,  0.0f,  1.0f,  0.0f, 1f, 0f,
+        halfSide,  0f,  halfSide,  0.0f,  1.0f,  0.0f, 1f, 0f,
+        -halfSide,  0f,  halfSide,  0.0f,  1.0f,  0.0f, 1f, 1f,
+        -halfSide,  0f, -halfSide,  0.0f,  1.0f,  0.0f, 0f, 1f
+    )
+
+    //Processed data
+    private val coordinatesPerVertex = 3
+    private val coordinatesPerNormal = 3
+    private val coordinatesPerTexture = 2
+    private val coordinatesPerPoint = coordinatesPerVertex + coordinatesPerNormal + coordinatesPerTexture
+    private val pointsCount = data.size / coordinatesPerPoint
+    private val vertexStride: Int = coordinatesPerVertex * Float.SIZE_BYTES
+    private val normalStride: Int = coordinatesPerNormal * Float.SIZE_BYTES
+    private val textureStride: Int = coordinatesPerTexture * Float.SIZE_BYTES
+    private lateinit var vertices: FloatArray
+    private lateinit var normals: FloatArray
+    private lateinit var textures: FloatArray
+    private lateinit var vertexBuffer: FloatBuffer
+    private lateinit var normalBuffer: FloatBuffer
+    private lateinit var textureBuffer: FloatBuffer
+
+    private fun processData() {
+        val vertexList = emptyList<Float>().toMutableList()
+        val normalList = emptyList<Float>().toMutableList()
+        val textureList = emptyList<Float>().toMutableList()
+        for (pointIdx in 0 until pointsCount) {
+            vertexList.add(data[pointIdx * coordinatesPerPoint + 0])
+            vertexList.add(data[pointIdx * coordinatesPerPoint + 1])
+            vertexList.add(data[pointIdx * coordinatesPerPoint + 2])
+
+            normalList.add(data[pointIdx * coordinatesPerPoint + 3])
+            normalList.add(data[pointIdx * coordinatesPerPoint + 4])
+            normalList.add(data[pointIdx * coordinatesPerPoint + 5])
+
+            textureList.add(data[pointIdx * coordinatesPerPoint + 6])
+            textureList.add(data[pointIdx * coordinatesPerPoint + 7])
+        }
+        vertices = vertexList.toFloatArray()
+        normals = normalList.toFloatArray()
+        textures = textureList.toFloatArray()
+        vertexBuffer =
+            ByteBuffer.allocateDirect(vertices.size * Float.SIZE_BYTES).run {
+                order(ByteOrder.nativeOrder())
+                asFloatBuffer().apply {
+                    put(vertices)
+                    position(0)
+                }
+            }
+        normalBuffer =
+            ByteBuffer.allocateDirect(normals.size * Float.SIZE_BYTES).run {
+                order(ByteOrder.nativeOrder())
+                asFloatBuffer().apply {
+                    put(normals)
+                    position(0)
+                }
+            }
+        textureBuffer =
+            ByteBuffer.allocateDirect(textures.size * Float.SIZE_BYTES).run {
+                order(ByteOrder.nativeOrder())
+                asFloatBuffer().apply {
+                    put(textures)
+                    position(0)
+                }
+            }
+    }
+
+    //Shaders
+    private var program: Int
+
+    init {
+        textureData = Dependencies.textureLoader.loadTexture(textureResourceId)
+        processData()
+        Matrix.setIdentityM(modelMatrix, 0)
+        program = GLES30.glCreateProgram().also {
+            GLES30.glAttachShader(it, loadShader(GLES30.GL_VERTEX_SHADER, PHONG_VERTEX_SHADER))
+            GLES30.glAttachShader(it, loadShader(GLES30.GL_FRAGMENT_SHADER, PHONG_FRAGMENT_SHADER))
+            GLES30.glLinkProgram(it)
+        }
+    }
+
+    private fun setBaseParams(program: Int, view: FloatArray, projection: FloatArray) {
+        val posLoc = GLES30.glGetAttribLocation(program, "position")
+        val colLoc = GLES30.glGetUniformLocation(program, "color")
+        val modelLoc = GLES30.glGetUniformLocation(program, "model")
+        val viewLoc = GLES30.glGetUniformLocation(program, "view")
+        val projectionLoc = GLES30.glGetUniformLocation(program, "projection")
+        GLES30.glUniformMatrix4fv(modelLoc, 1, false, modelMatrix, 0)
+        GLES30.glUniformMatrix4fv(viewLoc, 1, false, view, 0)
+        GLES30.glUniformMatrix4fv(projectionLoc, 1, false, projection, 0)
+        GLES30.glVertexAttribPointer(
+            posLoc,
+            coordinatesPerVertex,
+            GLES30.GL_FLOAT,
+            false,
+            vertexStride,
+            vertexBuffer
+        )
+        GLES30.glUniform4fv(colLoc, 1, color, 0)
+        GLES30.glEnableVertexAttribArray(posLoc)
+    }
+
+    private fun setTexturesParams(program: Int) {
+        val texLoc = GLES30.glGetAttribLocation(program, "a_texture")
+        val textureUnit1Loc = GLES30.glGetUniformLocation(program, "texture_unit")
+        GLES30.glUniform1i(textureUnit1Loc, textureData.textureNumber)
+        GLES30.glVertexAttribPointer(
+            texLoc,
+            coordinatesPerTexture,
+            GLES30.GL_FLOAT,
+            false,
+            textureStride,
+            textureBuffer
+        )
+        GLES30.glEnableVertexAttribArray(texLoc)
+        GLES30.glActiveTexture(GLES30.GL_TEXTURE0 + textureData.textureNumber)
+        GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureData.textureId)
+    }
+
+    private fun setLightParams(program: Int) {
+        val modelTypeLoc = GLES30.glGetUniformLocation(program, "model_type")
+        val modelInvTLoc = GLES30.glGetUniformLocation(program, "modelInvT")
+        val lightColLoc = GLES30.glGetUniformLocation(program, "light_color")
+        val lightPositionLoc = GLES30.glGetUniformLocation(program, "light_position")
+        val ambientValueLoc = GLES30.glGetUniformLocation(program, "ambient_value")
+        val diffuseValueLoc = GLES30.glGetUniformLocation(program, "diffuse_value")
+        val specularValueLoc = GLES30.glGetUniformLocation(program, "specular_value")
+        val k0Loc = GLES30.glGetUniformLocation(program, "k0")
+        val k1Loc = GLES30.glGetUniformLocation(program, "k1")
+        val k2Loc = GLES30.glGetUniformLocation(program, "k2")
+        val cameraPositionLoc = GLES30.glGetUniformLocation(program, "camera_position")
+        val normalLoc = GLES30.glGetAttribLocation(program, "a_normal")
+        val modelInv = FloatArray(16)
+        val modelInvT = FloatArray(16)
+        Matrix.invertM(modelInv, 0, modelMatrix, 0)
+        Matrix.transposeM(modelInvT, 0, modelInv, 0)
+        GLES30.glUniform1i(modelTypeLoc, Dependencies.pointLight.model.toInt())
+        GLES30.glUniformMatrix4fv(modelInvTLoc, 1, false, modelInvT, 0)
+        GLES30.glUniform4fv(lightColLoc, 1, Dependencies.pointLight.color, 0)
+        GLES30.glUniform3fv(lightPositionLoc, 1, Dependencies.pointLight.position, 0)
+        GLES30.glUniform1f(ambientValueLoc, Dependencies.pointLight.getAmbientValue())
+        GLES30.glUniform1f(diffuseValueLoc, Dependencies.pointLight.getDiffuseValue())
+        GLES30.glUniform1f(specularValueLoc, Dependencies.pointLight.getSpecularValue())
+        GLES30.glUniform1f(k0Loc, Dependencies.pointLight.getK0Value())
+        GLES30.glUniform1f(k1Loc, Dependencies.pointLight.getK1Value())
+        GLES30.glUniform1f(k2Loc, Dependencies.pointLight.getK2Value())
+        GLES30.glUniform3fv(cameraPositionLoc, 1, Dependencies.camera.getPosition().toFloatArray(), 0)
+        GLES30.glVertexAttribPointer(
+            normalLoc,
+            coordinatesPerNormal,
+            GLES30.GL_FLOAT,
+            false,
+            normalStride,
+            normalBuffer
+        )
+        GLES30.glEnableVertexAttribArray(normalLoc)
+    }
+
+    private fun getCurrentProgram() = program
+
+    override fun draw(view: FloatArray, projection: FloatArray) {
+        val program = getCurrentProgram()
+        GLES30.glUseProgram(program)
+        pipeline.execute(modelMatrix)
+        setBaseParams(program, view, projection)
+        setTexturesParams(program)
+        if (Dependencies.pointLight.active) {
+            setLightParams(program)
+        }
+        GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, pointsCount);
+    }
+}
