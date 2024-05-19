@@ -14,7 +14,7 @@ import kotlin.math.sin
 data class BoundingSphere(var center: Vector, var radius: Float)
 
 abstract class GameObject(protected var model: Cube,
-                          protected var position: Vector = Vector(0f, 0f, 0f),
+                          var position: Vector = Vector(0f, 0f, 0f),
                           protected var yaw: Float = 0f) {
 
     protected var pitch = 0f
@@ -24,6 +24,8 @@ abstract class GameObject(protected var model: Cube,
         center = model.getMassCenter() + position,
         radius = model.getMassCenter().distanceTo(model.getFartherPoint())
     )
+
+    abstract fun init()
 
     protected fun hasCollisionWith(other: GameObject) =
         boundingSphere.center.distanceTo(other.boundingSphere.center) <

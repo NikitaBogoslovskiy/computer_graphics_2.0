@@ -16,7 +16,7 @@ class Hero(model: Cube,
     private var rotateFactor = 0.5f
     private var otherObjects = emptyList<GameObject>().toMutableList()
 
-    init {
+    override fun init() {
         model.pipeline.add(position, function = ::addTranslation)
         updateDirection()
         relocateTorch()
