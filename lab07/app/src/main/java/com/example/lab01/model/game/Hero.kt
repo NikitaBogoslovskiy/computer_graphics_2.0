@@ -12,11 +12,15 @@ class Hero(model: Cube,
            yaw: Float = 0f) : GameObject(model, position, yaw) {
     var isMoving = false
     var torch: TorchLight? = null
-    private var moveFactor = 0.05f
+    private var moveFactor = 0.5f
     private var rotateFactor = 0.5f
     private var otherObjects = emptyList<GameObject>().toMutableList()
 
     override fun init() {
+        boundingSphere = BoundingSphere(
+            center = model.getMassCenter() + position,
+            radius = model.getMassCenter().distanceTo(model.getFartherPoint())
+        )
         model.pipeline.add(position, function = ::addTranslation)
         updateDirection()
         relocateTorch()
@@ -38,6 +42,8 @@ class Hero(model: Cube,
             if (obj is Obstacle && hasCollisionWith(obj)) {
                 hasCollisions = true
                 break
+            } else if (obj is Bonus && hasCollisionWith(obj)) {
+                obj.activateCallback.invoke()
             }
         }
 

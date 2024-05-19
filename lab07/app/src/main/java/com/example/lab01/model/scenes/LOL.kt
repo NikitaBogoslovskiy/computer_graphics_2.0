@@ -34,6 +34,9 @@ class LOL : Scene {
     private var sceneBoundaries = SceneBoundaries(
         minX = -49f, minZ = -49f, maxX = 49f, maxZ = 49f
     )
+    private val possibleX = (sceneBoundaries.minX.toInt()..sceneBoundaries.maxX.toInt() step 4).toMutableList()
+    private val possibleZ = (sceneBoundaries.minZ.toInt()..sceneBoundaries.maxZ.toInt() step 4).toMutableList()
+
     fun load() {
         loadObjects()
         loadLights()
@@ -57,16 +60,6 @@ class LOL : Scene {
             textureResourceId = R.drawable.grass_texture
         )
 
-        plant = Hero(
-            model = Cube(textureResourceId = R.drawable.ice_texture)
-        )
-        Dependencies.gameInputManager.setLeftSideClickListener {
-            plant.isMoving = it
-        }
-        Dependencies.gameInputManager.setRightSideClickListener {
-            plant.rotateAroundY(it)
-        }
-
         cat = Enemy(
             model = Cube(textureResourceId = R.drawable.wood_texture)
         )
@@ -74,6 +67,12 @@ class LOL : Scene {
         coin = Bonus(
             model = Cube(textureResourceId = R.drawable.sky_texture)
         )
+        coin.activateCallback = {
+            val startPosition = coin.startPosition.copy()
+            assignRandomPosition(coin)
+            possibleX.add(startPosition.x.toInt())
+            possibleZ.add(startPosition.z.toInt())
+        }
 
         obstacles.addAll(listOf(
             Obstacle(
@@ -92,6 +91,17 @@ class LOL : Scene {
                 model = Cube(textureResourceId = R.drawable.ground_texture)
             )
         ))
+
+        plant = Hero(
+            model = Cube(textureResourceId = R.drawable.ice_texture)
+        )
+        Dependencies.gameInputManager.setLeftSideClickListener {
+            plant.isMoving = it
+        }
+        Dependencies.gameInputManager.setRightSideClickListener {
+            plant.rotateAroundY(it)
+        }
+        plant.addOtherObjects(cat, coin, *obstacles.toTypedArray())
     }
 
     private fun loadLights() {
@@ -108,7 +118,7 @@ class LOL : Scene {
         plant.torch = torchLight
     }
 
-    private fun assignRandomPosition(obj: GameObject, possibleX: MutableList<Int>, possibleZ: MutableList<Int>) {
+    private fun assignRandomPosition(obj: GameObject) {
         val xIdx = Random.nextInt(possibleX.size)
         val zIdx = Random.nextInt(possibleZ.size)
         obj.position = Vector(possibleX[xIdx].toFloat(), 0.75f, possibleZ[zIdx].toFloat())
@@ -118,13 +128,11 @@ class LOL : Scene {
     }
 
     fun setup() {
-        val possibleX = (sceneBoundaries.minX.toInt()..sceneBoundaries.maxX.toInt() step 4).toMutableList()
-        val possibleZ = (sceneBoundaries.minZ.toInt()..sceneBoundaries.maxZ.toInt() step 4).toMutableList()
         for(obstacle in obstacles)
-            assignRandomPosition(obstacle, possibleX, possibleZ)
-        assignRandomPosition(coin, possibleX, possibleZ)
-        assignRandomPosition(plant, possibleX, possibleZ)
-        assignRandomPosition(cat, possibleX, possibleZ)
+            assignRandomPosition(obstacle)
+        assignRandomPosition(coin)
+        assignRandomPosition(plant)
+        assignRandomPosition(cat)
     }
 
     override fun draw(view: FloatArray, projection: FloatArray) {

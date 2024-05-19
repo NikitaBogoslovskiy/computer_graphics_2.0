@@ -37,7 +37,8 @@ class Renderer : GLSurfaceView.Renderer {
     override fun onDrawFrame(unused: GL10) {
         GLES30.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
         GLES30.glClear(GLES30.GL_DEPTH_BUFFER_BIT or GLES30.GL_COLOR_BUFFER_BIT)
-        scene.draw(camera.getViewMatrix(), projectionMatrix)
+        if (Dependencies.gameIsActive)
+            scene.draw(camera.getViewMatrix(), projectionMatrix)
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {

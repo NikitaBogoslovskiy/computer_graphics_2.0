@@ -20,10 +20,7 @@ abstract class GameObject(protected var model: Cube,
     protected var pitch = 0f
     protected var direction = Vector()
     protected var rotateActionCallback: () -> Unit = {}
-    protected var boundingSphere: BoundingSphere = BoundingSphere(
-        center = model.getMassCenter() + position,
-        radius = model.getMassCenter().distanceTo(model.getFartherPoint())
-    )
+    protected lateinit var boundingSphere: BoundingSphere
 
     abstract fun init()
 

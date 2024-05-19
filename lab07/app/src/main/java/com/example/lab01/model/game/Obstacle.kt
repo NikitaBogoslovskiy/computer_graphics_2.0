@@ -9,6 +9,10 @@ class Obstacle(model: Cube,
                yaw: Float = 0f) : GameObject(model, position, yaw) {
 
     override fun init() {
+        boundingSphere = BoundingSphere(
+            center = model.getMassCenter() + position,
+            radius = model.getMassCenter().distanceTo(model.getFartherPoint())
+        )
         model.pipeline.add(position, function = ::addTranslation)
         updateDirection()
     }

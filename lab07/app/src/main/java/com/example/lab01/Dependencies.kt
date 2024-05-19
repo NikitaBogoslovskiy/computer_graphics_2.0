@@ -21,4 +21,5 @@ object Dependencies {
     lateinit var gameInputManager: GameInputManager
     val camera = Camera()
     val textureLoader = TextureLoader()
+    var gameIsActive = true
 }
