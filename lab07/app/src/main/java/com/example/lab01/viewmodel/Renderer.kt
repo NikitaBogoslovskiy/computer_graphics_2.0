@@ -31,14 +31,12 @@ class Renderer : GLSurfaceView.Renderer {
         //scene = Apelsinchik()
         scene = LOL()
         scene.load()
-        scene.setup()
     }
 
     override fun onDrawFrame(unused: GL10) {
         GLES30.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
         GLES30.glClear(GLES30.GL_DEPTH_BUFFER_BIT or GLES30.GL_COLOR_BUFFER_BIT)
-        if (Dependencies.gameIsActive)
-            scene.draw(camera.getViewMatrix(), projectionMatrix)
+        scene.draw(camera.getViewMatrix(), projectionMatrix)
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {

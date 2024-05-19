@@ -12,6 +12,11 @@ class Bonus(model: Cube,
     lateinit var activateCallback: () -> Unit
     var startPosition: Vector = Vector()
 
+    override fun reset() {
+        super.reset()
+        startPosition = Vector()
+    }
+
     override fun init() {
         boundingSphere = BoundingSphere(
             center = model.getMassCenter() + position,

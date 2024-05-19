@@ -92,6 +92,8 @@ class Cube(var sideLength: Float = 1.5f,
     fun getMassCenter() = massCenter
     fun getFartherPoint() = fartherPoint
 
+    fun resetPosition() = Matrix.setIdentityM(modelMatrix, 0)
+
     private fun processData() {
         val vertexList = emptyList<Float>().toMutableList()
         val normalList = emptyList<Float>().toMutableList()

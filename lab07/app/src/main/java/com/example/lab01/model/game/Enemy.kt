@@ -14,14 +14,25 @@ class Enemy(model: Cube,
     private val moveFactor = 0.1f
     private var rotateFactor = 0.1f
     lateinit var hero: Hero
+    lateinit var failingActionCallback: () -> Unit
 
     override fun init() {
         boundingSphere = BoundingSphere(
             center = model.getMassCenter() + position,
             radius = model.getMassCenter().distanceTo(model.getFartherPoint())
         )
+        model.resetPosition()
         model.pipeline.add(position, function = ::addTranslation)
         updateDirection()
+    }
+
+    private fun moveForward() {
+        val shift = direction * moveFactor
+        boundingSphere.center += shift
+        if (hasCollisionWith(hero))
+            failingActionCallback.invoke()
+        position += shift
+        model.pipeline.add(shift, function = ::addTranslation)
     }
 
     override fun draw(view: FloatArray, projection: FloatArray) {
@@ -31,7 +42,7 @@ class Enemy(model: Cube,
             rotateAroundY(angle, rotateFactor)
             rotateActionCallback.invoke()
         }
-        moveForward(moveFactor)
+        moveForward()
         model.draw(view, projection)
     }
 }

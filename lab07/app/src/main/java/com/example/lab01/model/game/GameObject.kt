@@ -22,6 +22,11 @@ abstract class GameObject(protected var model: Cube,
     protected var rotateActionCallback: () -> Unit = {}
     protected lateinit var boundingSphere: BoundingSphere
 
+    open fun reset() {
+        model.resetPosition()
+        yaw = 0f
+    }
+
     abstract fun init()
 
     protected fun hasCollisionWith(other: GameObject) =

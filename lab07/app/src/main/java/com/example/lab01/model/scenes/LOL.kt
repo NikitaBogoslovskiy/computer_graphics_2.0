@@ -1,6 +1,13 @@
 package com.example.lab01.model.scenes
 
+import android.os.Handler
+import android.os.Looper
+import android.view.View
+import android.widget.Button
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.lab01.Dependencies
+import com.example.lab01.Dependencies.context
 import com.example.lab01.R
 import com.example.lab01.model.game.Bonus
 import com.example.lab01.model.game.Enemy
@@ -11,20 +18,20 @@ import com.example.lab01.model.light.AmbientLight
 import com.example.lab01.model.light.PointLight
 import com.example.lab01.model.light.TorchLight
 import com.example.lab01.model.shapes.Cube
-import com.example.lab01.model.shapes.InstancedMesh
-import com.example.lab01.model.shapes.Mesh
 import com.example.lab01.model.shapes.Plane
 import com.example.lab01.model.shapes.Skybox
 import com.example.lab01.utils.Vector
-import com.example.lab01.utils.addScale
-import com.example.lab01.utils.addTranslation
-import com.example.lab01.utils.radians
-import kotlin.math.cos
 import kotlin.random.Random
+
 
 data class SceneBoundaries(var minX: Float, var minZ: Float, var maxX: Float, var maxZ: Float)
 
+enum class GameState {
+    NOT_STARTED, WON, LOST, IN_PROCESS
+}
+
 class LOL : Scene {
+    private var gameIsActive = false
     private lateinit var skybox: Skybox
     private lateinit var grass: Plane
     private lateinit var plant: Hero
@@ -34,8 +41,30 @@ class LOL : Scene {
     private var sceneBoundaries = SceneBoundaries(
         minX = -49f, minZ = -49f, maxX = 49f, maxZ = 49f
     )
-    private val possibleX = (sceneBoundaries.minX.toInt()..sceneBoundaries.maxX.toInt() step 4).toMutableList()
-    private val possibleZ = (sceneBoundaries.minZ.toInt()..sceneBoundaries.maxZ.toInt() step 4).toMutableList()
+    private lateinit var possibleX: MutableList<Int>
+    private lateinit var possibleZ: MutableList<Int>
+
+    private val lightPanel: ConstraintLayout = Dependencies.activity.findViewById(R.id.lightPanel)
+    private val messageBox: TextView = Dependencies.activity.findViewById(R.id.messageBox)
+    private val startButton: Button = Dependencies.activity.findViewById(R.id.gameStartButton)
+
+    init {
+        startButton.setOnClickListener {
+            reset()
+            setup()
+            messageBox.visibility = View.GONE
+            startButton.visibility = View.GONE
+            lightPanel.visibility = View.VISIBLE
+            gameIsActive = true
+        }
+    }
+
+    private fun endGame() {
+        lightPanel.visibility = View.GONE
+        messageBox.visibility = View.VISIBLE
+        startButton.visibility = View.VISIBLE
+        gameIsActive = false
+    }
 
     fun load() {
         loadObjects()
@@ -103,6 +132,18 @@ class LOL : Scene {
         }
         plant.addOtherObjects(cat, coin, *obstacles.toTypedArray())
         cat.hero = plant
+        plant.winningActionCallback = {
+            Handler(Looper.getMainLooper()).post {
+                messageBox.text = context.getString(R.string.you_won)
+                endGame()
+            }
+        }
+        cat.failingActionCallback = {
+            Handler(Looper.getMainLooper()).post {
+                messageBox.text = context.getString(R.string.you_lost)
+                endGame()
+            }
+        }
     }
 
     private fun loadLights() {
@@ -128,7 +169,17 @@ class LOL : Scene {
         possibleZ.removeAt(zIdx)
     }
 
-    fun setup() {
+    private fun reset() {
+        possibleX = (sceneBoundaries.minX.toInt()..sceneBoundaries.maxX.toInt() step 4).toMutableList()
+        possibleZ = (sceneBoundaries.minZ.toInt()..sceneBoundaries.maxZ.toInt() step 4).toMutableList()
+        for(obstacle in obstacles)
+            obstacle.reset()
+        coin.reset()
+        plant.reset()
+        cat.reset()
+    }
+
+    private fun setup() {
         for(obstacle in obstacles)
             assignRandomPosition(obstacle)
         assignRandomPosition(coin)
@@ -137,6 +188,9 @@ class LOL : Scene {
     }
 
     override fun draw(view: FloatArray, projection: FloatArray) {
+        if (!gameIsActive)
+            return
+
         plant.doActions()
         val newView = Dependencies.camera.getViewMatrix()
         skybox.draw(newView, projection)

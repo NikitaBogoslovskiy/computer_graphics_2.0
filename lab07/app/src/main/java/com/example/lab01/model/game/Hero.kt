@@ -12,6 +12,7 @@ class Hero(model: Cube,
            yaw: Float = 0f) : GameObject(model, position, yaw) {
     var isMoving = false
     var torch: TorchLight? = null
+    lateinit var winningActionCallback: () -> Unit
     private var moveFactor = 0.5f
     private var rotateFactor = 0.5f
     private var otherObjects = emptyList<GameObject>().toMutableList()
@@ -44,6 +45,7 @@ class Hero(model: Cube,
                 break
             } else if (obj is Bonus && hasCollisionWith(obj)) {
                 obj.activateCallback.invoke()
+                winningActionCallback.invoke()
             }
         }
 

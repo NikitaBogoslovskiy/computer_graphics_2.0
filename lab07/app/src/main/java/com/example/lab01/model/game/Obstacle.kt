@@ -13,6 +13,7 @@ class Obstacle(model: Cube,
             center = model.getMassCenter() + position,
             radius = model.getMassCenter().distanceTo(model.getFartherPoint())
         )
+        model.resetPosition()
         model.pipeline.add(position, function = ::addTranslation)
         updateDirection()
     }
