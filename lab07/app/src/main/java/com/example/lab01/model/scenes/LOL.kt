@@ -53,25 +53,29 @@ class LOL : Scene {
                 R.drawable.back
             )
         )
+
+        cube2 = Obstacle(
+            model = Cube(textureResourceId = R.drawable.ground_texture),
+            position = Vector(3f, 0.75f, 3f)
+        )
+
+        grass = Plane(
+            sideLength = 100f,
+            textureResourceId = R.drawable.grass_texture
+        )
+
         cube = Hero(
             model = Cube(textureResourceId = R.drawable.ice_texture),
             position = Vector(0f, 0.75f, 0f)
         )
         cube.torch = torchLight
-        cube2 = Obstacle(
-            model = Cube(sideLength = 10f, textureResourceId = R.drawable.ground_texture),
-            position = Vector(10f, 5f, 10f)
-        )
         Dependencies.gameInputManager.setLeftSideClickListener {
             cube.isMoving = it
         }
         Dependencies.gameInputManager.setRightSideClickListener {
             cube.rotateAroundY(it)
         }
-        grass = Plane(
-            sideLength = 100f,
-            textureResourceId = R.drawable.grass_texture
-        )
+        cube.addOtherObjects(cube2)
         /*
         plant = Mesh(
             modelFileId = R.raw.plant,

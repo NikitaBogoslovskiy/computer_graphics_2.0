@@ -9,13 +9,14 @@ import com.example.lab01.model.shaders.PHONG_VERTEX_SHADER
 import com.example.lab01.model.utility.loadShader
 import com.example.lab01.utils.Pipeline
 import com.example.lab01.utils.TextureData
+import com.example.lab01.utils.Vector
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
 val cubeColor = floatArrayOf(0.5f, 0.5f, 0f, 1f)
 
-class Cube(sideLength: Float = 1.5f,
+class Cube(var sideLength: Float = 1.5f,
            var color: FloatArray = cubeColor,
            textureResourceId: Int = R.drawable.default_texture) : Shape {
 
@@ -79,12 +80,17 @@ class Cube(sideLength: Float = 1.5f,
     private val vertexStride: Int = coordinatesPerVertex * Float.SIZE_BYTES
     private val normalStride: Int = coordinatesPerNormal * Float.SIZE_BYTES
     private val textureStride: Int = coordinatesPerTexture * Float.SIZE_BYTES
+    private var massCenter: Vector = Vector()
+    private var fartherPoint: Vector = Vector()
     private lateinit var vertices: FloatArray
     private lateinit var normals: FloatArray
     private lateinit var textures: FloatArray
     private lateinit var vertexBuffer: FloatBuffer
     private lateinit var normalBuffer: FloatBuffer
     private lateinit var textureBuffer: FloatBuffer
+
+    fun getMassCenter() = massCenter
+    fun getFartherPoint() = fartherPoint
 
     private fun processData() {
         val vertexList = emptyList<Float>().toMutableList()
@@ -131,12 +137,34 @@ class Cube(sideLength: Float = 1.5f,
             }
     }
 
+    fun findMassCenterAndFartherPoint() {
+        val pointsList = emptyList<Vector>().toMutableList()
+        for(pointIdx in 0 until pointsCount) {
+            pointsList.add(Vector(
+                x = vertices[pointIdx * 3],
+                y = vertices[pointIdx * 3 + 1],
+                z = vertices[pointIdx * 3 + 2],
+            ))
+        }
+        massCenter = pointsList.reduce(Vector::plus) / pointsCount.toFloat()
+        fartherPoint = massCenter.copy()
+        var maxDistance = 0f
+        pointsList.forEach {
+            val dist = massCenter.distanceTo(it)
+            if (dist > maxDistance) {
+                maxDistance = dist
+                fartherPoint = it
+            }
+        }
+    }
+
     //Shaders
     private var program: Int
 
     init {
         textureData = Dependencies.textureLoader.loadTexture(textureResourceId)
         processData()
+        findMassCenterAndFartherPoint()
         Matrix.setIdentityM(modelMatrix, 0)
         program = GLES30.glCreateProgram().also {
             GLES30.glAttachShader(it, loadShader(GLES30.GL_VERTEX_SHADER, PHONG_VERTEX_SHADER))

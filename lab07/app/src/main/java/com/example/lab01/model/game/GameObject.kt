@@ -11,6 +11,8 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
+data class BoundingSphere(var center: Vector, var radius: Float)
+
 abstract class GameObject(protected var model: Cube,
                           protected var position: Vector = Vector(0f, 0f, 0f),
                           protected var yaw: Float = 0f) {
@@ -18,6 +20,14 @@ abstract class GameObject(protected var model: Cube,
     protected var pitch = 0f
     protected var direction = Vector()
     protected var rotateActionCallback: () -> Unit = {}
+    protected var boundingSphere: BoundingSphere = BoundingSphere(
+        center = model.getMassCenter() + position,
+        radius = model.getMassCenter().distanceTo(model.getFartherPoint())
+    )
+
+    protected fun hasCollisionWith(other: GameObject) =
+        boundingSphere.center.distanceTo(other.boundingSphere.center) <
+                boundingSphere.radius + other.boundingSphere.radius
 
     protected fun updateDirection() {
         direction.x = cos(radians(yaw)) * cos(radians(pitch))
@@ -26,9 +36,10 @@ abstract class GameObject(protected var model: Cube,
         direction.normalize()
     }
 
-    fun moveForward(moveFactor: Float) {
+    open fun moveForward(moveFactor: Float) {
         val shift = direction * moveFactor
         position += shift
+        boundingSphere.center += shift
         model.pipeline.add(shift, function = ::addTranslation)
     }
 

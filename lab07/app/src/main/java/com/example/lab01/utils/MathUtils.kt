@@ -31,6 +31,10 @@ data class Vector(var x: Float = 0f,
         return Vector(x * scalar, y * scalar, z * scalar)
     }
 
+    operator fun div(scalar: Float): Vector {
+        return Vector(x / scalar, y / scalar, z / scalar)
+    }
+
     operator fun unaryMinus(): Vector {
         return Vector(-x, -y, -z)
     }
@@ -52,6 +56,10 @@ data class Vector(var x: Float = 0f,
     }
 
     fun toFloatArray() = floatArrayOf(x, y, z)
+
+    fun distanceTo(other: Vector) = sqrt((other.x - x) * (other.x - x) +
+                                            (other.y - y) * (other.y - y) +
+                                            (other.z - z) * (other.z - z))
 }
 
 private const val MULTIPLIER = (PI / 180).toFloat()

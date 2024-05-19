@@ -14,6 +14,7 @@ class Hero(model: Cube,
     var torch: TorchLight? = null
     private var moveFactor = 0.05f
     private var rotateFactor = 0.5f
+    private var otherObjects = emptyList<GameObject>().toMutableList()
 
     init {
         model.pipeline.add(position, function = ::addTranslation)
@@ -22,8 +23,30 @@ class Hero(model: Cube,
         relocateCamera()
     }
 
+    fun addOtherObjects(vararg args: GameObject) = otherObjects.addAll(args)
+
     fun rotateAroundY(rawAngle: Float) {
         super.rotateAroundY(rawAngle, rotateFactor)
+    }
+
+    private fun moveForward() {
+        val shift = direction * moveFactor
+        boundingSphere.center += shift
+
+        var hasCollisions = false
+        for(obj in otherObjects) {
+            if (obj is Obstacle && hasCollisionWith(obj)) {
+                hasCollisions = true
+                break
+            }
+        }
+
+        if (hasCollisions) {
+            boundingSphere.center -= shift
+        } else {
+            position += shift
+            model.pipeline.add(shift, function = ::addTranslation)
+        }
     }
 
     private fun relocateTorch() {
@@ -44,7 +67,7 @@ class Hero(model: Cube,
         rotateActionCallback.invoke()
         rotateActionCallback = {}
         if (isMoving) {
-            moveForward(moveFactor)
+            moveForward()
         }
         relocateTorch()
         relocateCamera()
