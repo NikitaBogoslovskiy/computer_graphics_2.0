@@ -4,6 +4,9 @@ import com.example.lab01.Dependencies
 import com.example.lab01.R
 import com.example.lab01.model.game.GameObject
 import com.example.lab01.model.game.Hero
+import com.example.lab01.model.light.AmbientLight
+import com.example.lab01.model.light.PointLight
+import com.example.lab01.model.light.TorchLight
 import com.example.lab01.model.shapes.Cube
 import com.example.lab01.model.shapes.InstancedMesh
 import com.example.lab01.model.shapes.Mesh
@@ -11,6 +14,9 @@ import com.example.lab01.model.shapes.Plane
 import com.example.lab01.model.shapes.Skybox
 import com.example.lab01.utils.Vector
 import com.example.lab01.utils.addScale
+import com.example.lab01.utils.addTranslation
+import com.example.lab01.utils.radians
+import kotlin.math.cos
 
 class LOL : Scene {
     private var skybox: Skybox
@@ -23,9 +29,18 @@ class LOL : Scene {
     private var maxX = 3.65f
 
     init {
-        Dependencies.pointLight.position = floatArrayOf(0f, 5f, 5f)
+        Dependencies.lightManager.add(AmbientLight())
+        Dependencies.lightManager.add(PointLight(position = floatArrayOf(-35f, 15f, -35f)))
+        Dependencies.lightManager.add(PointLight(position = floatArrayOf(35f, 15f, -35f)))
+        Dependencies.lightManager.add(PointLight(position = floatArrayOf(-35f, 15f, 35f)))
+        Dependencies.lightManager.add(PointLight(position = floatArrayOf(35f, 15f, 35f)))
+        Dependencies.lightManager.add(TorchLight(
+            position = floatArrayOf(0f, 10f, 0f),
+            direction = floatArrayOf(0f, -1f, 0f)
+        ))
+
         skybox = Skybox(
-            sideLength = 100f,
+            sideLength = 1000f,
             textureResourceIds = listOf(
                 R.drawable.right,
                 R.drawable.left,
@@ -36,7 +51,8 @@ class LOL : Scene {
             )
         )
         cube = Hero(
-            model = Cube(textureResourceId = R.drawable.ice_texture)
+            model = Cube(textureResourceId = R.drawable.ice_texture),
+            position = Vector(0f, 0.75f, 0f)
         )
         Dependencies.gameInputManager.setLeftSideClickListener {
             cube.isMoving = it
@@ -44,10 +60,11 @@ class LOL : Scene {
         Dependencies.gameInputManager.setRightSideClickListener {
             cube.rotateAroundY(it)
         }
-/*        grass = Plane(
+        grass = Plane(
             sideLength = 100f,
             textureResourceId = R.drawable.grass_texture
         )
+        /*
         plant = Mesh(
             modelFileId = R.raw.plant,
             textureResourceId = R.drawable.plant_texture
@@ -64,9 +81,11 @@ class LOL : Scene {
     }
 
     override fun draw(view: FloatArray, projection: FloatArray) {
-        skybox.draw(view, projection)
+        cube.doActions()
+        skybox.draw(Dependencies.camera.getViewMatrix(), projection)
         /*        grass.draw(view, projection)
                 plant.draw(view, projection)*/
+        grass.draw(Dependencies.camera.getViewMatrix(), projection)
         cube.draw(view, projection)
     }
 }

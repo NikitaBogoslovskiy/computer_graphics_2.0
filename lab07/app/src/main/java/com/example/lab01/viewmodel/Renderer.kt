@@ -41,7 +41,7 @@ class Renderer : GLSurfaceView.Renderer {
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {
         GLES30.glViewport(0, 0, width, height)
         val ratio: Float = width.toFloat() / height.toFloat()
-        Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1f, 1f, 2f, 100f)
+        Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1f, 1f, 2f, 1000f)
         Dependencies.gameInputManager.setScreenWidth(width.toFloat())
     }
 }

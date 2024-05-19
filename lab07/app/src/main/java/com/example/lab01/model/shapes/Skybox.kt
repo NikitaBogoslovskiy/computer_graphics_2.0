@@ -4,7 +4,6 @@ import android.opengl.GLES30
 import android.opengl.Matrix
 import com.example.lab01.Dependencies
 import com.example.lab01.R
-import com.example.lab01.model.light.LightShading
 import com.example.lab01.model.shaders.BASE_FRAGMENT_SHADER
 import com.example.lab01.model.shaders.BASE_VERTEX_SHADER
 import com.example.lab01.model.shaders.GOURAUD_FRAGMENT_SHADER

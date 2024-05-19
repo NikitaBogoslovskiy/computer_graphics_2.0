@@ -15,7 +15,7 @@ class Apelsinchik : Scene {
     private var mesh: Mesh
 
     init {
-        Dependencies.pointLight.position = floatArrayOf(-4f, 4f, 1f)
+        //Dependencies.pointLight.position = floatArrayOf(-4f, 4f, 1f)
         mesh = Mesh(R.raw.cat, R.drawable.pupirishki)
         mesh.pipeline.addUnique(
             Vector(3f, 0f, 0f),

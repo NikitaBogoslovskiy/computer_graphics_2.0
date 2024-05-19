@@ -197,7 +197,7 @@ class InstancedMesh(
     }
 
     private fun setLightParams(program: Int) {
-        val modelTypeLoc = GLES30.glGetUniformLocation(program, "model_type")
+/*        val modelTypeLoc = GLES30.glGetUniformLocation(program, "model_type")
         val lightColLoc = GLES30.glGetUniformLocation(program, "light_color")
         val lightPositionLoc = GLES30.glGetUniformLocation(program, "light_position")
         val ambientValueLoc = GLES30.glGetUniformLocation(program, "ambient_value")
@@ -226,7 +226,7 @@ class InstancedMesh(
             normalStride,
             normalBuffer
         )
-        GLES30.glEnableVertexAttribArray(normalLoc)
+        GLES30.glEnableVertexAttribArray(normalLoc)*/
     }
 
     private fun getCurrentProgram() = program

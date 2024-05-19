@@ -4,21 +4,14 @@ import android.opengl.GLES30
 import android.opengl.Matrix
 import com.example.lab01.Dependencies
 import com.example.lab01.R
-import com.example.lab01.model.light.LightShading
-import com.example.lab01.model.shaders.BASE_FRAGMENT_SHADER
-import com.example.lab01.model.shaders.BASE_VERTEX_SHADER
-import com.example.lab01.model.shaders.GOURAUD_FRAGMENT_SHADER
-import com.example.lab01.model.shaders.GOURAUD_VERTEX_SHADER
 import com.example.lab01.model.shaders.PHONG_FRAGMENT_SHADER
 import com.example.lab01.model.shaders.PHONG_VERTEX_SHADER
 import com.example.lab01.model.utility.loadShader
 import com.example.lab01.utils.Pipeline
 import com.example.lab01.utils.TextureData
-import com.example.lab01.utils.Vector
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
-import java.nio.ShortBuffer
 
 val cubeColor = floatArrayOf(0.5f, 0.5f, 0f, 1f)
 
@@ -156,8 +149,14 @@ class Cube(sideLength: Float = 1.5f,
         val posLoc = GLES30.glGetAttribLocation(program, "position")
         val colLoc = GLES30.glGetUniformLocation(program, "color")
         val modelLoc = GLES30.glGetUniformLocation(program, "model")
+        val modelInvTLoc = GLES30.glGetUniformLocation(program, "modelInvT")
         val viewLoc = GLES30.glGetUniformLocation(program, "view")
         val projectionLoc = GLES30.glGetUniformLocation(program, "projection")
+        val modelInv = FloatArray(16)
+        val modelInvT = FloatArray(16)
+        Matrix.invertM(modelInv, 0, modelMatrix, 0)
+        Matrix.transposeM(modelInvT, 0, modelInv, 0)
+        GLES30.glUniformMatrix4fv(modelInvTLoc, 1, false, modelInvT, 0)
         GLES30.glUniformMatrix4fv(modelLoc, 1, false, modelMatrix, 0)
         GLES30.glUniformMatrix4fv(viewLoc, 1, false, view, 0)
         GLES30.glUniformMatrix4fv(projectionLoc, 1, false, projection, 0)
@@ -191,32 +190,34 @@ class Cube(sideLength: Float = 1.5f,
     }
 
     private fun setLightParams(program: Int) {
-        val modelTypeLoc = GLES30.glGetUniformLocation(program, "model_type")
-        val modelInvTLoc = GLES30.glGetUniformLocation(program, "modelInvT")
-        val lightColLoc = GLES30.glGetUniformLocation(program, "light_color")
-        val lightPositionLoc = GLES30.glGetUniformLocation(program, "light_position")
-        val ambientValueLoc = GLES30.glGetUniformLocation(program, "ambient_value")
-        val diffuseValueLoc = GLES30.glGetUniformLocation(program, "diffuse_value")
-        val specularValueLoc = GLES30.glGetUniformLocation(program, "specular_value")
+        val data = Dependencies.lightManager.getLightsData()
+
+        val ambientLoc = GLES30.glGetUniformLocation(program, "ambient")
+        val diffuseLoc = GLES30.glGetUniformLocation(program, "diffuse")
+        val specularLoc = GLES30.glGetUniformLocation(program, "specular")
         val k0Loc = GLES30.glGetUniformLocation(program, "k0")
         val k1Loc = GLES30.glGetUniformLocation(program, "k1")
         val k2Loc = GLES30.glGetUniformLocation(program, "k2")
+        val lightColLoc = GLES30.glGetUniformLocation(program, "light_color")
+        val lightPositionLoc = GLES30.glGetUniformLocation(program, "light_position")
+        val torchDirectionLoc = GLES30.glGetUniformLocation(program, "torch_direction")
+        val torchInnerCutoffLoc = GLES30.glGetUniformLocation(program, "torch_inner_cutoff")
+        val torchOuterCutoffLoc = GLES30.glGetUniformLocation(program, "torch_outer_cutoff")
         val cameraPositionLoc = GLES30.glGetUniformLocation(program, "camera_position")
         val normalLoc = GLES30.glGetAttribLocation(program, "a_normal")
-        val modelInv = FloatArray(16)
-        val modelInvT = FloatArray(16)
-        Matrix.invertM(modelInv, 0, modelMatrix, 0)
-        Matrix.transposeM(modelInvT, 0, modelInv, 0)
-        GLES30.glUniform1i(modelTypeLoc, Dependencies.pointLight.model.toInt())
-        GLES30.glUniformMatrix4fv(modelInvTLoc, 1, false, modelInvT, 0)
-        GLES30.glUniform4fv(lightColLoc, 1, Dependencies.pointLight.color, 0)
-        GLES30.glUniform3fv(lightPositionLoc, 1, Dependencies.pointLight.position, 0)
-        GLES30.glUniform1f(ambientValueLoc, Dependencies.pointLight.getAmbientValue())
-        GLES30.glUniform1f(diffuseValueLoc, Dependencies.pointLight.getDiffuseValue())
-        GLES30.glUniform1f(specularValueLoc, Dependencies.pointLight.getSpecularValue())
-        GLES30.glUniform1f(k0Loc, Dependencies.pointLight.getK0Value())
-        GLES30.glUniform1f(k1Loc, Dependencies.pointLight.getK1Value())
-        GLES30.glUniform1f(k2Loc, Dependencies.pointLight.getK2Value())
+
+        GLES30.glUniform1fv(ambientLoc, data.ambient.size, data.ambient, 0)
+        GLES30.glUniform1fv(diffuseLoc, data.diffuse.size, data.diffuse, 0)
+        GLES30.glUniform1fv(specularLoc, data.specular.size, data.specular, 0)
+        GLES30.glUniform1fv(k0Loc, data.k0.size, data.k0, 0)
+        GLES30.glUniform1fv(k1Loc, data.k1.size, data.k1, 0)
+        GLES30.glUniform1fv(k2Loc, data.k2.size, data.k2, 0)
+        GLES30.glUniform4fv(lightColLoc, data.lightColor.size / 4, data.lightColor, 0)
+        GLES30.glUniform3fv(lightPositionLoc, data.lightPosition.size / 3, data.lightPosition, 0)
+        GLES30.glUniform3fv(torchDirectionLoc, data.torchDirection.size / 3, data.torchDirection, 0)
+        GLES30.glUniform1fv(torchInnerCutoffLoc, data.torchInnerCutoff.size, data.torchInnerCutoff, 0)
+        GLES30.glUniform1fv(torchOuterCutoffLoc, data.torchOuterCutoff.size, data.torchOuterCutoff, 0)
+
         GLES30.glUniform3fv(cameraPositionLoc, 1, Dependencies.camera.getPosition().toFloatArray(), 0)
         GLES30.glVertexAttribPointer(
             normalLoc,
@@ -237,9 +238,7 @@ class Cube(sideLength: Float = 1.5f,
         pipeline.execute(modelMatrix)
         setBaseParams(program, view, projection)
         setTexturesParams(program)
-        if (Dependencies.pointLight.active) {
-            setLightParams(program)
-        }
+        setLightParams(program)
         GLES30.glDrawArrays(GLES30.GL_TRIANGLES, 0, pointsCount);
     }
 }

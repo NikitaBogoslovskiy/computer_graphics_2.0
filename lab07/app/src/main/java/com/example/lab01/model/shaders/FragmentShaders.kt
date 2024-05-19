@@ -71,17 +71,21 @@ const val PHONG_FRAGMENT_SHADER =
     """ 
         precision mediump float;
         
-        uniform int model_type; 
         uniform vec4 color;
         uniform sampler2D texture_unit;
-        uniform float ambient_value;
-        uniform float diffuse_value;
-        uniform float specular_value;
-        uniform float k0;
-        uniform float k1;
-        uniform float k2;
-        uniform vec4 light_color;
-        uniform vec3 light_position;
+        
+        uniform float ambient[6];
+        uniform float diffuse[5];
+        uniform float specular[5];
+        uniform float k0[5];
+        uniform float k1[5];
+        uniform float k2[5];
+        uniform vec4 light_color[6];
+        uniform vec3 light_position[5];
+        uniform vec3 torch_direction[1];
+        uniform float torch_inner_cutoff[1];
+        uniform float torch_outer_cutoff[1];
+        
         uniform vec3 camera_position;
         
         varying vec2 v_texture;
@@ -90,32 +94,44 @@ const val PHONG_FRAGMENT_SHADER =
         
         void main() {
            vec3 combined_light = vec3(0.0);
-           
+           combined_light += ambient[5] * vec3(light_color[5]);
            vec3 norm = normalize(v_normal);
-           vec3 light_vec = light_position - frag_position;
-           vec3 light_dir = normalize(light_vec); 
-           float diff = max(dot(norm, light_dir), 0.0);
-           vec3 diffuse = vec3(diffuse_value * diff * light_color);
-           combined_light += diffuse;
            
-           if (model_type == 1) {
-               vec3 ambient = vec3(ambient_value * light_color);
+           for(int i = 0; i < 5; i++) {
+               vec3 light_vec = light_position[i] - frag_position;
+               vec3 light_dir = normalize(light_vec);
+               float dist = length(light_vec);
+               float attenuation = 1.0 / (k0[i] + k1[i] * dist + k2[i] * dist * dist);
                
+               //ambient
+               vec3 ambient_value = attenuation * vec3(ambient[i] * light_color[i]);
+               
+               //diffuse
+               float diff = max(dot(norm, light_dir), 0.0);
+               vec3 diffuse_value = attenuation * vec3(diffuse[i] * diff * light_color[i]);
+               
+               //specular
                vec3 view_dir = normalize(camera_position - frag_position);
                vec3 reflect_dir = reflect(-light_dir, norm);
                float spec = pow(max(dot(view_dir, reflect_dir), 0.0), 64.0);
-               vec3 specular = vec3(specular_value * spec * light_color); 
+               vec3 specular_value = attenuation * vec3(specular[i] * spec * light_color[i]); 
                
-               combined_light += ambient + specular;
+               if (i == 4) {
+                    float theta = dot(light_dir, normalize(-torch_direction[0]));
+                    float epsilon = torch_inner_cutoff[0] - torch_outer_cutoff[0];
+                    float intensity = clamp((theta - torch_outer_cutoff[0]) / epsilon, 0.0, 1.0);
+                    diffuse_value *= intensity;
+                    specular_value *= intensity;
+               }
+               
+               //combined
+               combined_light += ambient_value + diffuse_value + specular_value;
            }
-           
-           float dist = length(light_vec);
-           float attenuation = 1.0 / (k0 + k1 * dist + k2 * dist * dist);
            
            vec4 texture = texture2D(texture_unit, v_texture);
            vec4 combined_color = mix(color, texture, texture.w);
            
-           gl_FragColor = vec4(attenuation * combined_light * vec3(combined_color), 1.0);
+           gl_FragColor = vec4(combined_light * vec3(combined_color), 1.0);
         }
     """
 

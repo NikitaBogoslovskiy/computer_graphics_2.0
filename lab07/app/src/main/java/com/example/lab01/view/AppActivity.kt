@@ -12,6 +12,7 @@ import com.example.lab01.databinding.AppActivityBinding
 import com.example.lab01.model.light.PointLight
 import android.view.View.GONE
 import android.widget.Switch
+import com.example.lab01.model.light.LightManager
 import kotlinx.coroutines.withContext
 
 class AppActivity : ComponentActivity() {
@@ -20,7 +21,7 @@ class AppActivity : ComponentActivity() {
         Dependencies.context = applicationContext
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_activity)
-        Dependencies.pointLight = PointLight()
+        Dependencies.lightManager = LightManager()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
     }
 
