@@ -12,8 +12,8 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 abstract class GameObject(protected var model: Cube,
-                      protected var position: Vector = Vector(0f, 0f, 0f),
-                      protected var yaw: Float = 0f) {
+                          protected var position: Vector = Vector(0f, 0f, 0f),
+                          protected var yaw: Float = 0f) {
 
     protected var pitch = 0f
     protected var direction = Vector()

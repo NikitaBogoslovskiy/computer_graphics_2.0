@@ -4,6 +4,7 @@ import com.example.lab01.Dependencies
 import com.example.lab01.R
 import com.example.lab01.model.game.GameObject
 import com.example.lab01.model.game.Hero
+import com.example.lab01.model.game.Obstacle
 import com.example.lab01.model.light.AmbientLight
 import com.example.lab01.model.light.PointLight
 import com.example.lab01.model.light.TorchLight
@@ -20,7 +21,8 @@ import kotlin.math.cos
 
 class LOL : Scene {
     private var skybox: Skybox
-    private lateinit var cube: Hero
+    private var cube: Hero
+    private var cube2: Obstacle
 
     private lateinit var plant: Mesh
     private lateinit var cat: Mesh
@@ -29,15 +31,16 @@ class LOL : Scene {
     private var maxX = 3.65f
 
     init {
+        val torchLight = TorchLight(
+            position = floatArrayOf(0f, 0.75f, 0f),
+            direction = floatArrayOf(1f, 0f, 1f)
+        )
         Dependencies.lightManager.add(AmbientLight())
         Dependencies.lightManager.add(PointLight(position = floatArrayOf(-35f, 15f, -35f)))
         Dependencies.lightManager.add(PointLight(position = floatArrayOf(35f, 15f, -35f)))
         Dependencies.lightManager.add(PointLight(position = floatArrayOf(-35f, 15f, 35f)))
         Dependencies.lightManager.add(PointLight(position = floatArrayOf(35f, 15f, 35f)))
-        Dependencies.lightManager.add(TorchLight(
-            position = floatArrayOf(0f, 10f, 0f),
-            direction = floatArrayOf(0f, -1f, 0f)
-        ))
+        Dependencies.lightManager.add(torchLight)
 
         skybox = Skybox(
             sideLength = 1000f,
@@ -53,6 +56,11 @@ class LOL : Scene {
         cube = Hero(
             model = Cube(textureResourceId = R.drawable.ice_texture),
             position = Vector(0f, 0.75f, 0f)
+        )
+        cube.torch = torchLight
+        cube2 = Obstacle(
+            model = Cube(sideLength = 10f, textureResourceId = R.drawable.ground_texture),
+            position = Vector(10f, 5f, 10f)
         )
         Dependencies.gameInputManager.setLeftSideClickListener {
             cube.isMoving = it
@@ -82,10 +90,12 @@ class LOL : Scene {
 
     override fun draw(view: FloatArray, projection: FloatArray) {
         cube.doActions()
-        skybox.draw(Dependencies.camera.getViewMatrix(), projection)
+        val newView = Dependencies.camera.getViewMatrix()
+        skybox.draw(newView, projection)
         /*        grass.draw(view, projection)
                 plant.draw(view, projection)*/
-        grass.draw(Dependencies.camera.getViewMatrix(), projection)
-        cube.draw(view, projection)
+        grass.draw(newView, projection)
+        cube.draw(newView, projection)
+        cube2.draw(newView, projection)
     }
 }

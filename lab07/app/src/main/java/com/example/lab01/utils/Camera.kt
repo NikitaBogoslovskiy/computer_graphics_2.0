@@ -6,7 +6,7 @@ import kotlin.math.sin
 
 class Camera {
     private var isEnabled = true
-    var cameraPos = Vector(3f, 3f, 3f);
+    var cameraPos = Vector(0f, 3f, 0f);
     var cameraTarget = Vector(0f, 0f, 0f);
     private var cameraUp = Vector(0.0f, 1.0f, 0.0f);
     private var viewMatrix = FloatArray(16)

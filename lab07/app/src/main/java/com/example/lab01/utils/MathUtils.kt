@@ -15,6 +15,10 @@ data class Vector(var x: Float = 0f,
                   var y: Float = 0f,
                   var z: Float = 0f) {
 
+    constructor(other: Vector) : this(other.x, other.y, other.z)
+
+    fun copy() = Vector(this)
+
     operator fun plus(other: Vector): Vector {
         return Vector(x + other.x, y + other.y, z + other.z)
     }

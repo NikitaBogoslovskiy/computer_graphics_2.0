@@ -1,6 +1,7 @@
 package com.example.lab01.model.game
 
 import com.example.lab01.Dependencies
+import com.example.lab01.model.light.TorchLight
 import com.example.lab01.model.shapes.Cube
 import com.example.lab01.model.shapes.Mesh
 import com.example.lab01.utils.Vector
@@ -10,12 +11,14 @@ class Hero(model: Cube,
            position: Vector = Vector(0f, 0f, 0f),
            yaw: Float = 0f) : GameObject(model, position, yaw) {
     var isMoving = false
+    var torch: TorchLight? = null
     private var moveFactor = 0.05f
     private var rotateFactor = 0.5f
 
     init {
         model.pipeline.add(position, function = ::addTranslation)
         updateDirection()
+        relocateTorch()
         relocateCamera()
     }
 
@@ -23,11 +26,17 @@ class Hero(model: Cube,
         super.rotateAroundY(rawAngle, rotateFactor)
     }
 
+    private fun relocateTorch() {
+        val light = torch ?: return
+        light.position = position.toFloatArray()
+        light.direction = direction.toFloatArray()
+    }
+
     private fun relocateCamera() {
-        Dependencies.camera.cameraPos = position - direction * 6f
+        Dependencies.camera.cameraPos = position.copy() - direction * 5f
         Dependencies.camera.cameraPos.y = position.y + 2f
-        Dependencies.camera.cameraTarget = Dependencies.camera.cameraPos + direction
-        Dependencies.camera.cameraTarget.y -= 0.1f
+        Dependencies.camera.cameraTarget = position.copy()
+        Dependencies.camera.cameraTarget.y += 0.9f
         Dependencies.camera.updateViewMatrix()
     }
 
@@ -37,10 +46,11 @@ class Hero(model: Cube,
         if (isMoving) {
             moveForward(moveFactor)
         }
+        relocateTorch()
         relocateCamera()
     }
 
     override fun draw(view: FloatArray, projection: FloatArray) {
-        model.draw(Dependencies.camera.getViewMatrix(), projection)
+        model.draw(view, projection)
     }
 }
