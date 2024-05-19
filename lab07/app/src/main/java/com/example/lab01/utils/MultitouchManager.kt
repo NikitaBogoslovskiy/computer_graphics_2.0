@@ -49,7 +49,7 @@ class MultitouchManager(private var view: SurfaceView) {
                         val oldDistance =
                             Point(previousX0, previousY0).distanceTo(Point(previousX1, previousY1))
                         val newDistance = Point(x0, y0).distanceTo(Point(x1, y1))
-                        val angle = degrees(acos(dir1.dot(dir2) / (dir1.length() * dir2.length())))
+                        val angle = degrees(acos(dir1.dot2d(dir2) / (dir1.length() * dir2.length())))
                         if (angle < 60) {
                             camera.updateCameraDirection(dir1.x, dir1.y)
                         } else {

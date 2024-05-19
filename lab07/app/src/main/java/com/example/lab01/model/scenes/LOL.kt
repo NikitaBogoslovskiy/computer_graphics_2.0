@@ -102,6 +102,7 @@ class LOL : Scene {
             plant.rotateAroundY(it)
         }
         plant.addOtherObjects(cat, coin, *obstacles.toTypedArray())
+        cat.hero = plant
     }
 
     private fun loadLights() {

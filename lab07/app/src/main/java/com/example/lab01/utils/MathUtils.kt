@@ -1,6 +1,7 @@
 package com.example.lab01.utils
 
 import kotlin.math.PI
+import kotlin.math.acos
 import kotlin.math.sqrt
 
 data class Point(var x: Float = 0f,
@@ -46,7 +47,9 @@ data class Vector(var x: Float = 0f,
         return Vector(newX, newY, newZ)
     }
 
-    fun dot(other: Vector) = x * other.x + y * other.y
+    fun dot2d(other: Vector) = x * other.x + y * other.y
+
+    fun dot3d(other: Vector) = x * other.x + y * other.y + z * other.z
 
     fun length() = sqrt(x * x + y * y + z * z)
 
@@ -60,6 +63,8 @@ data class Vector(var x: Float = 0f,
     fun distanceTo(other: Vector) = sqrt((other.x - x) * (other.x - x) +
                                             (other.y - y) * (other.y - y) +
                                             (other.z - z) * (other.z - z))
+
+    fun angleWith(other: Vector) = degrees(acos(dot3d(other) / (length() * other.length())))
 }
 
 private const val MULTIPLIER = (PI / 180).toFloat()
