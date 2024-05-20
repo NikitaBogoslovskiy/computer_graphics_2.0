@@ -57,6 +57,9 @@ data class LightData(
 
 @SuppressLint("UseSwitchCompatOrMaterialCode")
 class LightManager {
+    var pN = 0
+    var tN = 0
+    var aN = 0
     private var lights = emptyList<Light>().toMutableList()
 
     private var ambientEnabled = true
@@ -118,7 +121,14 @@ class LightManager {
         torchEnabled = false
     }
 
-    fun add(light: Light) = lights.add(light)
+    fun add(light: Light) {
+        when(light) {
+            is AmbientLight -> aN++
+            is PointLight -> pN++
+            is TorchLight -> tN++
+        }
+        lights.add(light)
+    }
 
     fun getLightsData(): LightData {
         val pointLights = lights.filterIsInstance<PointLight>()
@@ -127,7 +137,7 @@ class LightManager {
         val pN = pointLights.size
         val tN = torchLights.size
         val aN = ambientLights.size
-        var data = LightData(
+        val data = LightData(
             ambient = FloatArray(pN + tN + aN),
             diffuse = FloatArray(pN + tN),
             specular = FloatArray(pN + tN),

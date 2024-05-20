@@ -1,5 +1,6 @@
 package com.example.lab01.model.game
 
+import com.example.lab01.model.light.TorchLight
 import com.example.lab01.model.shapes.Cube
 import com.example.lab01.model.shapes.Mesh
 import com.example.lab01.utils.Vector
@@ -14,6 +15,14 @@ class Bonus(model: Mesh,
     lateinit var activateCallback: () -> Unit
     var startPosition: Vector = Vector()
     var alreadyScaled = false
+    private var maxY = model.getMaxY()
+    //lateinit var torch: TorchLight
+    private var colors = listOf(
+        floatArrayOf(0.5625f, 0f, 0.125f, 1f),
+        floatArrayOf(0.25f, 0f, 1f, 1f),
+        floatArrayOf(1f, 0.84f, 0f, 1f),
+        floatArrayOf(0f, 0.64f, 0.42f, 1f),
+    )
 
     override fun reset() {
         super.reset()
@@ -22,6 +31,9 @@ class Bonus(model: Mesh,
     }
 
     override fun init() {
+        switchColor()
+/*        torch.position = position.toFloatArray()
+        torch.position[1] += (maxY - minY) * scaleFactor + 1.5f*/
         position.y -= minY * scaleFactor
         boundingSphere = BoundingSphere(
             center = position,
@@ -35,6 +47,10 @@ class Bonus(model: Mesh,
         model.pipeline.add(position, function = ::addTranslation)
         startPosition = position.copy()
         updateDirection()
+    }
+
+    fun switchColor() {
+        model.color = colors.random()
     }
 
     override fun draw(view: FloatArray, projection: FloatArray) {

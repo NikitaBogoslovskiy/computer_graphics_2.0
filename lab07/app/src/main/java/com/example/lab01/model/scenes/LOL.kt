@@ -28,6 +28,8 @@ import com.example.lab01.model.shapes.Plane
 import com.example.lab01.model.shapes.Skybox
 import com.example.lab01.utils.Vector
 import com.example.lab01.utils.addScale
+import com.example.lab01.utils.radians
+import kotlin.math.cos
 import kotlin.random.Random
 
 
@@ -46,6 +48,7 @@ class LOL : Scene {
     var sceneBoundaries = SceneBoundaries(
         minX = -25f, minZ = -25f, maxX = 25f, maxZ = 25f, shiftX = 5f, shiftZ = 5f
     )
+    private lateinit var torchAssignmentCallback: () -> Unit
     private lateinit var possibleX: MutableList<Int>
     private lateinit var possibleZ: MutableList<Int>
 
@@ -70,7 +73,12 @@ class LOL : Scene {
             musicPlayer = MediaPlayer.create(context, R.raw.background1)
             musicPlayer.isLooping = true
             musicPlayer.setVolume(0.8f, 0.8f)
-            musicPlayer.start()
+            if (enemySwitch.isChecked) {
+                musicPlayer.start()
+                enemy.isActive = true
+            } else {
+                enemy.isActive = false
+            }
             messageBox.visibility = View.GONE
             startButton.visibility = View.GONE
             lightPanel.visibility = View.VISIBLE
@@ -82,11 +90,11 @@ class LOL : Scene {
             when(isChecked) {
                 true -> {
                     enemy.isActive = true
-                    //musicPlayer.start()
+                    musicPlayer.start()
                 }
                 false -> {
                     enemy.isActive = false
-                    //musicPlayer.stop()
+                    musicPlayer.pause()
                 }
             }
         }
@@ -102,8 +110,9 @@ class LOL : Scene {
     }
 
     fun load() {
-        loadObjects()
         loadLights()
+        loadObjects()
+        torchAssignmentCallback.invoke()
     }
 
     private fun loadObjects() {
@@ -134,8 +143,7 @@ class LOL : Scene {
         bonus = Bonus(
             model = Mesh(
                 modelFileId = R.raw.candy,
-                textureResourceId = R.drawable.default_texture,
-                color = floatArrayOf(0.5625f, 0f, 0.125f, 1f)
+                textureResourceId = R.drawable.default_texture
             )
         )
         bonus.activateCallback = {
@@ -219,17 +227,30 @@ class LOL : Scene {
     }
 
     private fun loadLights() {
-        val torchLight = TorchLight(
+        val heroTorchLight = TorchLight(
             position = floatArrayOf(0f, 0.75f, 0f),
             direction = floatArrayOf(1f, 0f, 1f)
+        )
+        val bonusTorchLight = TorchLight(
+            direction = floatArrayOf(0f, -1f, 0f),
+            k0 = 1f,
+            ambient = 0f,
+            diffuse = 0.5f,
+            specular = 0f,
+            innerCutOff = cos(radians(15f)),
+            outerCutOff = cos(radians(25f)),
         )
         Dependencies.lightManager.add(AmbientLight())
         Dependencies.lightManager.add(PointLight(position = floatArrayOf(-35f, 100f, -35f)))
         Dependencies.lightManager.add(PointLight(position = floatArrayOf(35f, 100f, -35f)))
         Dependencies.lightManager.add(PointLight(position = floatArrayOf(-35f, 100f, 35f)))
         Dependencies.lightManager.add(PointLight(position = floatArrayOf(35f, 100f, 35f)))
-        Dependencies.lightManager.add(torchLight)
-        hero.torch = torchLight
+        Dependencies.lightManager.add(heroTorchLight)
+        //Dependencies.lightManager.add(bonusTorchLight)
+        torchAssignmentCallback = {
+            hero.torch = heroTorchLight
+            //bonus.torch = bonusTorchLight
+        }
     }
 
     private fun assignRandomPosition(obj: GameObject, shift: Float = 0f) {

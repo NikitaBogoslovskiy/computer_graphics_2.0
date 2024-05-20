@@ -20,7 +20,7 @@ import java.nio.FloatBuffer
 class Mesh(
     private var modelFileId: Int,
     private var textureResourceId: Int = R.drawable.default_texture,
-    private var color: FloatArray = floatArrayOf(1f, 0.4f, 0f, 0f)
+    var color: FloatArray = floatArrayOf(1f, 0.4f, 0f, 0f)
 ) : Shape {
 
     //Model pipeline
@@ -40,6 +40,7 @@ class Mesh(
     private val textureStride: Int = coordinatesPerTexture * Float.SIZE_BYTES
     private var maxRadius = 0f
     private var minY = Float.MAX_VALUE
+    private var maxY = Float.MIN_VALUE
     private var maxX = Float.MIN_VALUE
     private var pointsCount: Int = 0
     private lateinit var vertexBuffer: FloatBuffer
@@ -50,6 +51,7 @@ class Mesh(
 
     fun getMaxRadius() = maxRadius
     fun getMinY() = minY
+    fun getMaxY() = maxY
     fun getMaxX() = maxX
     fun resetPosition() = Matrix.setIdentityM(modelMatrix, 0)
 
@@ -100,6 +102,8 @@ class Mesh(
                 maxRadius = dist
             if (it.y < minY)
                 minY = it.y
+            if (it.y > maxY)
+                maxY = it.y
             if (it.x > maxX)
                 maxX = it.x
         }
@@ -118,14 +122,14 @@ class Mesh(
     }
 
     private fun init() {
-        textureData = Dependencies.textureLoader.loadTexture(textureResourceId)
-        processData()
-        Matrix.setIdentityM(modelMatrix, 0)
         program = GLES30.glCreateProgram().also {
             GLES30.glAttachShader(it, loadShader(GLES30.GL_VERTEX_SHADER, PHONG_VERTEX_SHADER))
             GLES30.glAttachShader(it, loadShader(GLES30.GL_FRAGMENT_SHADER, PHONG_FRAGMENT_SHADER))
             GLES30.glLinkProgram(it)
         }
+        textureData = Dependencies.textureLoader.loadTexture(textureResourceId)
+        processData()
+        Matrix.setIdentityM(modelMatrix, 0)
     }
 
     private fun setBaseParams(program: Int, view: FloatArray, projection: FloatArray) {

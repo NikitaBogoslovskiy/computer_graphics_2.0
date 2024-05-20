@@ -1,5 +1,7 @@
 package com.example.lab01.model.shaders
 
+import com.example.lab01.Dependencies
+
 const val BASE_FRAGMENT_SHADER =
     """
         precision mediump float;
@@ -67,24 +69,28 @@ const val GOURAUD_FRAGMENT_SHADER =
         }
     """
 
-const val PHONG_FRAGMENT_SHADER =
+var PHONG_FRAGMENT_SHADER =
     """ 
+        #define aN ${Dependencies.lightManager.aN}
+        #define pN ${Dependencies.lightManager.pN}
+        #define tN ${Dependencies.lightManager.tN}
+        
         precision mediump float;
         
         uniform vec4 color;
         uniform sampler2D texture_unit;
         
-        uniform float ambient[6];
-        uniform float diffuse[5];
-        uniform float specular[5];
-        uniform float k0[5];
-        uniform float k1[5];
-        uniform float k2[5];
-        uniform vec4 light_color[6];
-        uniform vec3 light_position[5];
-        uniform vec3 torch_direction[1];
-        uniform float torch_inner_cutoff[1];
-        uniform float torch_outer_cutoff[1];
+        uniform float ambient[pN + tN + aN];
+        uniform float diffuse[pN + tN];
+        uniform float specular[pN + tN];
+        uniform float k0[pN + tN];
+        uniform float k1[pN + tN];
+        uniform float k2[pN + tN];
+        uniform vec4 light_color[pN + tN + aN];
+        uniform vec3 light_position[pN + tN];
+        uniform vec3 torch_direction[tN];
+        uniform float torch_inner_cutoff[tN];
+        uniform float torch_outer_cutoff[tN];
         
         uniform vec3 camera_position;
         
@@ -94,10 +100,11 @@ const val PHONG_FRAGMENT_SHADER =
         
         void main() {
            vec3 combined_light = vec3(0.0);
-           combined_light += ambient[5] * vec3(light_color[5]);
+           for(int i = (pN + tN); i < (pN + tN + aN); i++)
+               combined_light += ambient[i] * vec3(light_color[i]);
            vec3 norm = normalize(v_normal);
            
-           for(int i = 0; i < 5; i++) {
+           for(int i = 0; i < (pN + tN); i++) {
                vec3 light_vec = light_position[i] - frag_position;
                vec3 light_dir = normalize(light_vec);
                float dist = length(light_vec);
@@ -116,10 +123,10 @@ const val PHONG_FRAGMENT_SHADER =
                float spec = pow(max(dot(view_dir, reflect_dir), 0.0), 64.0);
                vec3 specular_value = attenuation * vec3(specular[i] * spec * light_color[i]); 
                
-               if (i == 4) {
-                    float theta = dot(light_dir, normalize(-torch_direction[0]));
-                    float epsilon = torch_inner_cutoff[0] - torch_outer_cutoff[0];
-                    float intensity = clamp((theta - torch_outer_cutoff[0]) / epsilon, 0.0, 1.0);
+               if (i >= pN) {
+                    float theta = dot(light_dir, normalize(-torch_direction[i - pN]));
+                    float epsilon = torch_inner_cutoff[i - pN] - torch_outer_cutoff[i - pN];
+                    float intensity = clamp((theta - torch_outer_cutoff[i - pN]) / epsilon, 0.0, 1.0);
                     ambient_value *= intensity;
                     diffuse_value *= intensity;
                     specular_value *= intensity;
