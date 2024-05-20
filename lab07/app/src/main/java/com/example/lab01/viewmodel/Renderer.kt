@@ -20,7 +20,6 @@ import javax.microedition.khronos.opengles.GL10
 
 class Renderer : GLSurfaceView.Renderer {
     private val projectionMatrix = FloatArray(16)
-    private lateinit var scene: LOL
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
         GLES30.glEnable(GLES30.GL_DEPTH_TEST)
@@ -29,14 +28,14 @@ class Renderer : GLSurfaceView.Renderer {
         //scene = Scene2d3d()
         //scene = Platform()
         //scene = Apelsinchik()
-        scene = LOL()
-        scene.load()
+        Dependencies.scene.bindUI()
+        Dependencies.scene.load()
     }
 
     override fun onDrawFrame(unused: GL10) {
         GLES30.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
         GLES30.glClear(GLES30.GL_DEPTH_BUFFER_BIT or GLES30.GL_COLOR_BUFFER_BIT)
-        scene.draw(camera.getViewMatrix(), projectionMatrix)
+        Dependencies.scene.draw(camera.getViewMatrix(), projectionMatrix)
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {

@@ -120,6 +120,7 @@ const val PHONG_FRAGMENT_SHADER =
                     float theta = dot(light_dir, normalize(-torch_direction[0]));
                     float epsilon = torch_inner_cutoff[0] - torch_outer_cutoff[0];
                     float intensity = clamp((theta - torch_outer_cutoff[0]) / epsilon, 0.0, 1.0);
+                    ambient_value *= intensity;
                     diffuse_value *= intensity;
                     specular_value *= intensity;
                }

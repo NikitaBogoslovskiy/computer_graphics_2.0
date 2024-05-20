@@ -24,6 +24,10 @@ data class Vector(var x: Float = 0f,
         return Vector(x + other.x, y + other.y, z + other.z)
     }
 
+    operator fun plus(other: Float): Vector {
+        return Vector(x + other, y + other, z + other)
+    }
+
     operator fun minus(other: Vector): Vector {
         return Vector(x - other.x, y - other.y, z - other.z)
     }
@@ -63,6 +67,8 @@ data class Vector(var x: Float = 0f,
     fun distanceTo(other: Vector) = sqrt((other.x - x) * (other.x - x) +
                                             (other.y - y) * (other.y - y) +
                                             (other.z - z) * (other.z - z))
+
+    fun norm2() = sqrt(x * x + y * y + z * z)
 
     fun angleWith(other: Vector) = degrees(acos(dot3d(other) / (length() * other.length())))
 }

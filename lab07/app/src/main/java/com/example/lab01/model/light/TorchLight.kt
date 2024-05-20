@@ -9,14 +9,14 @@ import kotlin.math.cos
 
 data class TorchLight(var ambient: Float = 0.1f,
                       var diffuse: Float = 1f,
-                      var specular: Float = 1f,
-                      var k0: Float = 1f,
+                      var specular: Float = 0.5f,
+                      var k0: Float = 0.5f,
                       var k1: Float = 0f,
                       var k2: Float = 0f,
                       var color: FloatArray = floatArrayOf(1f, 1f, 1f, 1f),
                       var position: FloatArray = floatArrayOf(0f, 0f, 0f),
                       var direction: FloatArray = floatArrayOf(0f, -1f, 0f),
-                      var innerCutOff: Float = cos(radians(12.5f)),
+                      var innerCutOff: Float = cos(radians(15.0f)),
                       var outerCutOff: Float = cos(radians(17.5f))) : Light() {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

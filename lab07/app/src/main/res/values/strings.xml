@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">lab01</string>
-    <string name="start_new_game">Start New Game</string>
+    <string name="start_new_game">Start Game</string>
     <string name="you_won">You Won!</string>
     <string name="you_lost">You Lost :(</string>
+    <string name="plants_vs_cats">Krosh: Legacy</string>
 </resources>

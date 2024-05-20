@@ -5,24 +5,21 @@ import com.example.lab01.model.light.TorchLight
 import com.example.lab01.model.shapes.Cube
 import com.example.lab01.model.shapes.Mesh
 import com.example.lab01.utils.Vector
+import com.example.lab01.utils.addScale
 import com.example.lab01.utils.addTranslation
 
-class Hero(model: Cube,
+class Hero(model: Mesh,
            position: Vector = Vector(0f, 0f, 0f),
            yaw: Float = 0f) : GameObject(model, position, yaw) {
     var isMoving = false
     var torch: TorchLight? = null
     lateinit var winningActionCallback: () -> Unit
-    private var moveFactor = 0.5f
+    private var moveFactor = 0.25f
     private var rotateFactor = 0.5f
     private var otherObjects = emptyList<GameObject>().toMutableList()
 
     override fun init() {
-        boundingSphere = BoundingSphere(
-            center = model.getMassCenter() + position,
-            radius = model.getMassCenter().distanceTo(model.getFartherPoint())
-        )
-        model.pipeline.add(position, function = ::addTranslation)
+        super.init()
         updateDirection()
         relocateTorch()
         relocateCamera()
@@ -44,10 +41,23 @@ class Hero(model: Cube,
                 hasCollisions = true
                 break
             } else if (obj is Bonus && hasCollisionWith(obj)) {
-                obj.activateCallback.invoke()
-                winningActionCallback.invoke()
+                Dependencies.scene.currentBonusesNumber.set(
+                    Dependencies.scene.currentBonusesNumber.get()?.plus(1) ?: 0)
+                if (Dependencies.scene.currentBonusesNumber.get() == Dependencies.scene.maxBonusesNumber.get())
+                    winningActionCallback.invoke()
+                else
+                    obj.activateCallback.invoke()
+
             }
         }
+
+        val boundaries = Dependencies.scene.sceneBoundaries
+        val border = boundingSphere.center + boundingSphere.radius
+        if (border.x < boundaries.minX - boundaries.shiftX ||
+            border.x > boundaries.maxX + boundaries.shiftX ||
+            border.z < boundaries.minZ - boundaries.shiftZ ||
+            border.z > boundaries.maxZ + boundaries.shiftZ)
+            hasCollisions = true
 
         if (hasCollisions) {
             boundingSphere.center -= shift
@@ -64,10 +74,10 @@ class Hero(model: Cube,
     }
 
     private fun relocateCamera() {
-        Dependencies.camera.cameraPos = position.copy() - direction * 5f
-        Dependencies.camera.cameraPos.y = position.y + 2f
+        Dependencies.camera.cameraPos = position.copy() - direction * 6f
+        Dependencies.camera.cameraPos.y = position.y + 4f
         Dependencies.camera.cameraTarget = position.copy()
-        Dependencies.camera.cameraTarget.y += 0.9f
+        Dependencies.camera.cameraTarget.y += 2.0f
         Dependencies.camera.updateViewMatrix()
     }
 

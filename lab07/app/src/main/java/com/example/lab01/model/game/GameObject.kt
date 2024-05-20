@@ -5,6 +5,7 @@ import com.example.lab01.model.shapes.Cube
 import com.example.lab01.model.shapes.Mesh
 import com.example.lab01.utils.Vector
 import com.example.lab01.utils.addRotation
+import com.example.lab01.utils.addScale
 import com.example.lab01.utils.addTranslation
 import com.example.lab01.utils.radians
 import kotlin.math.PI
@@ -13,21 +14,37 @@ import kotlin.math.sin
 
 data class BoundingSphere(var center: Vector, var radius: Float)
 
-abstract class GameObject(protected var model: Cube,
+abstract class GameObject(var model: Mesh,
                           var position: Vector = Vector(0f, 0f, 0f),
-                          protected var yaw: Float = 0f) {
+                          var yaw: Float = 0f) {
 
     protected var pitch = 0f
     protected var direction = Vector()
     protected var rotateActionCallback: () -> Unit = {}
     protected lateinit var boundingSphere: BoundingSphere
+    protected var minY = model.getMinY()
+    protected var maxX = model.getMaxX()
+    protected var scaleFactor = 1f
 
     open fun reset() {
         model.resetPosition()
         yaw = 0f
     }
 
-    abstract fun init()
+    open fun init() {
+        position.y -= minY * scaleFactor
+        boundingSphere = BoundingSphere(
+            center = position,
+            radius = maxX * scaleFactor
+        )
+        if (scaleFactor != 1f)
+            model.pipeline.add(Vector(scaleFactor, scaleFactor, scaleFactor), function = ::addScale)
+        model.pipeline.add(position, function = ::addTranslation)
+    }
+
+    fun applyScale(scale: Float) {
+        scaleFactor = scale
+    }
 
     protected fun hasCollisionWith(other: GameObject) =
         boundingSphere.center.distanceTo(other.boundingSphere.center) <

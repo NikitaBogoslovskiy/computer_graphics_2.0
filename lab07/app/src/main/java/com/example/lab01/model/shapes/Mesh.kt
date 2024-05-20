@@ -38,7 +38,9 @@ class Mesh(
     private val vertexStride: Int = coordinatesPerVertex * Float.SIZE_BYTES
     private val normalStride: Int = coordinatesPerNormal * Float.SIZE_BYTES
     private val textureStride: Int = coordinatesPerTexture * Float.SIZE_BYTES
-
+    private var maxRadius = 0f
+    private var minY = Float.MAX_VALUE
+    private var maxX = Float.MIN_VALUE
     private var pointsCount: Int = 0
     private lateinit var vertexBuffer: FloatBuffer
     private lateinit var normalBuffer: FloatBuffer
@@ -46,11 +48,15 @@ class Mesh(
 
     private var meshLoader = MeshLoader()
 
-    fun getCurrentPosition() = Vector(modelMatrix[12], modelMatrix[13], modelMatrix[14])
+    fun getMaxRadius() = maxRadius
+    fun getMinY() = minY
+    fun getMaxX() = maxX
+    fun resetPosition() = Matrix.setIdentityM(modelMatrix, 0)
 
     private fun processData() {
         val data = meshLoader.loadObj(modelFileId)
         pointsCount = data.vertices.size / coordinatesPerVertex
+        shiftVertices(data.vertices)
         vertexBuffer =
             ByteBuffer.allocateDirect(data.vertices.size * Float.SIZE_BYTES).run {
                 order(ByteOrder.nativeOrder())
@@ -75,6 +81,33 @@ class Mesh(
                     position(0)
                 }
             }
+    }
+
+    private fun shiftVertices(vertices: FloatArray) {
+        var pointsList = emptyList<Vector>().toMutableList()
+        for(pointIdx in 0 until pointsCount) {
+            pointsList.add(Vector(
+                x = vertices[pointIdx * 3],
+                y = vertices[pointIdx * 3 + 1],
+                z = vertices[pointIdx * 3 + 2],
+            ))
+        }
+        val massCenter = pointsList.reduce(Vector::plus) / pointsCount.toFloat()
+        pointsList = pointsList.map { it - massCenter }.toMutableList()
+        pointsList.forEach {
+            val dist = it.norm2()
+            if (dist > maxRadius)
+                maxRadius = dist
+            if (it.y < minY)
+                minY = it.y
+            if (it.x > maxX)
+                maxX = it.x
+        }
+        for(pointIdx in 0 until pointsCount) {
+            vertices[pointIdx * 3] = pointsList[pointIdx].x
+            vertices[pointIdx * 3 + 1] = pointsList[pointIdx].y
+            vertices[pointIdx * 3 + 2] = pointsList[pointIdx].z
+        }
     }
 
     //Shaders
