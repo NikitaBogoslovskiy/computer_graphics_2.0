@@ -17,3 +17,11 @@ fun addRotation(mat: FloatArray, args: List<Any>) {
     Matrix.setRotateM(rotation, 0, angle, axis.x, axis.y, axis.z)
     Matrix.multiplyMM(mat, 0, rotation, 0, mat, 0)
 }
+
+fun addScale(mat: FloatArray, args: List<Any>) {
+    val scaleFactor = args[0] as Vector
+    val scale = FloatArray(16)
+    Matrix.setIdentityM(scale, 0)
+    Matrix.scaleM(scale, 0, scaleFactor.x, scaleFactor.y, scaleFactor.z)
+    Matrix.multiplyMM(mat, 0, scale, 0, mat, 0)
+}

@@ -7,6 +7,7 @@ import com.example.lab01.Dependencies.camera
 import com.example.lab01.model.scenes.particle_systems.BengalFire
 import com.example.lab01.model.scenes.Scene
 import com.example.lab01.model.scenes.particle_systems.Fireworks
+import com.example.lab01.model.scenes.particle_systems.SmokeAndMirrors
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -23,7 +24,8 @@ class Renderer : GLSurfaceView.Renderer {
         //scene = Platform()
         //scene = Apelsinchik()
         //scene = BengalFire()
-        scene = Fireworks()
+        //scene = Fireworks()
+        scene = SmokeAndMirrors()
     }
 
     override fun onDrawFrame(unused: GL10) {

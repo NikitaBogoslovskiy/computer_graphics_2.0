@@ -50,6 +50,10 @@ class Sprite(sideLength: Float = 0.2f,
 
     fun getTextureData() = textureData
 
+    fun resetModelMatrix() {
+        Matrix.setIdentityM(modelMatrix, 0)
+    }
+
     private fun processData() {
         val vertexList = emptyList<Float>().toMutableList()
         val textureList = emptyList<Float>().toMutableList()
