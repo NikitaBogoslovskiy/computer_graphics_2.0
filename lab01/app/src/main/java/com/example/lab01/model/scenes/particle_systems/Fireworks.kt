@@ -8,7 +8,7 @@ import kotlin.concurrent.thread
 import kotlin.random.Random
 
 class Fireworks : Scene {
-    private var fireworks: MutableList<Firework> = emptyList<Firework>().toMutableList()
+    private lateinit var firework: Firework
 
     private var minLinesNumber = 50
     private var maxLinesNumber = 200
@@ -30,7 +30,7 @@ class Fireworks : Scene {
     }
 
     private fun addRandomFirework() {
-        fireworks.add(Firework(
+        firework = Firework(
             linesNumber = Random.nextInt(minLinesNumber, maxLinesNumber),
             startPosition = Vector(
                 x = Random.nextFloat() * (maxStartPositionX - minStartPositionX) + minStartPositionX,
@@ -42,14 +42,12 @@ class Fireworks : Scene {
             maxDistance = Random.nextFloat() * (maxMaxDistance - minMaxDistance) + minMaxDistance,
             lineWidth = Random.nextFloat() * (maxLineWidth - minLineWidth) + minLineWidth,
             time = Random.nextLong(minTime, maxTime)
-        ))
+        )
     }
 
     override fun draw(view: FloatArray, projection: FloatArray) {
-        for(i in fireworks.indices)
-            fireworks[i].draw(view, projection)
-        if (fireworks.isNotEmpty() && fireworks.last().isOver)
+        firework.draw(view, projection)
+        if (firework.isOver)
             addRandomFirework()
-        fireworks.removeIf { it.isOver }
     }
 }
