@@ -19,9 +19,12 @@ import java.nio.FloatBuffer
 class Line(var startPoint: Vector = Vector(),
            var endPoint: Vector = Vector(),
            var startColor: Vector = Vector(),
-           var endColor: Vector = Vector()) : Shape {
+           var endColor: Vector = Vector(),
+           var startAlpha: Float = 1f,
+           var endAlpha: Float = 1f,
+           val lineWidth: Float = 3f) : Shape {
 
-    var alpha = 1f
+    var pipeline = Pipeline()
     private var modelMatrix = FloatArray(16)
 
     //Processed data
@@ -43,11 +46,11 @@ class Line(var startPoint: Vector = Vector(),
         colors[0] = startColor.x
         colors[1] = startColor.y
         colors[2] = startColor.z
-        colors[3] = alpha
+        colors[3] = startAlpha
         colors[4] = endColor.x
         colors[5] = endColor.y
         colors[6] = endColor.z
-        colors[7] = alpha
+        colors[7] = endAlpha
 
         vertexBuffer =
             ByteBuffer.allocateDirect(vertices.size * Float.SIZE_BYTES).run {
@@ -115,10 +118,11 @@ class Line(var startPoint: Vector = Vector(),
     private fun getCurrentProgram() = program
 
     override fun draw(view: FloatArray, projection: FloatArray) {
+        pipeline.execute(modelMatrix)
         val program = getCurrentProgram()
         GLES20.glUseProgram(program)
         setBaseParams(program, view, projection)
-        GLES20.glLineWidth(3f)
+        GLES20.glLineWidth(lineWidth)
         GLES20.glDrawArrays(GLES20.GL_LINES, 0, pointsCount)
     }
 }

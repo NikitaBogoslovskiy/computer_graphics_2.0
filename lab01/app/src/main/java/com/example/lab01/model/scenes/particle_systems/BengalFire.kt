@@ -1,12 +1,9 @@
-package com.example.lab01.model.scenes
+package com.example.lab01.model.scenes.particle_systems
 
-import com.example.lab01.R
 import com.example.lab01.model.particles.Spark
-import com.example.lab01.model.shapes.Line
-import com.example.lab01.model.shapes.Sprite
-import com.example.lab01.utils.Vector
+import com.example.lab01.model.scenes.Scene
 
-class ParticleSystem : Scene {
+class BengalFire : Scene {
     private var sparks: MutableList<Spark> = emptyList<Spark>().toMutableList()
     private val sparksNumber = 125
 

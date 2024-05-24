@@ -3,6 +3,7 @@ package com.example.lab01.model.particles
 import android.opengl.GLES20
 import com.example.lab01.R
 import com.example.lab01.model.shapes.Line
+import com.example.lab01.model.shapes.Sprite
 import com.example.lab01.model.shapes.spriteColor
 import com.example.lab01.utils.TextureData
 import com.example.lab01.utils.Vector
@@ -16,8 +17,9 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
-class Spark(size: Float = 0.15f, textureData: TextureData? = null) :
-    Particle(size, spriteColor, R.drawable.spark, textureData) {
+class Spark(size: Float = 0.15f, textureData: TextureData? = null) : Particle() {
+
+    private var sprite = Sprite(sideLength = size, textureId = R.drawable.spark, textureData = textureData)
 
     private lateinit var startPoint: Vector
     private lateinit var endPoint: Vector

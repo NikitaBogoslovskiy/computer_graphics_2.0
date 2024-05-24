@@ -3,16 +3,10 @@ package com.example.lab01.viewmodel
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
-import android.widget.SeekBar
 import com.example.lab01.Dependencies.camera
-import com.example.lab01.model.scenes.Apelsinchik
-import com.example.lab01.model.scenes.ParticleSystem
-import com.example.lab01.model.scenes.Platform
-//import com.example.lab01.model.scenes.Platform
+import com.example.lab01.model.scenes.particle_systems.BengalFire
 import com.example.lab01.model.scenes.Scene
-import com.example.lab01.model.scenes.Scene2d
-import com.example.lab01.model.scenes.Scene2d3d
-import com.example.lab01.utils.Camera
+import com.example.lab01.model.scenes.particle_systems.Fireworks
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -28,7 +22,8 @@ class Renderer : GLSurfaceView.Renderer {
         //scene = Scene2d3d()
         //scene = Platform()
         //scene = Apelsinchik()
-        scene = ParticleSystem()
+        //scene = BengalFire()
+        scene = Fireworks()
     }
 
     override fun onDrawFrame(unused: GL10) {
