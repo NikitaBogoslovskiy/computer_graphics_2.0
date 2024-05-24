@@ -154,16 +154,18 @@ const val PHONG_FRAGMENT_SHADER_WITH_BUMP_MAPPING =
         void main() {
            vec3 combined_light = vec3(0.0);
            
-           // vec2 x_start = vec2(v_texture.x - bump_step.x / 2.0, v_texture.y);
-           // vec2 x_end = vec2(v_texture.x + bump_step.x / 2.0, v_texture.y);
-           // vec2 y_start = vec2(v_texture.x, v_texture.y - bump_step.y / 2.0);
-           // vec2 y_end = vec2(v_texture.x, v_texture.y + bump_step.y / 2.0);
-           // vec3 x_grad = vec3(texture2D(texture_bump, x_start) - texture2D(texture_bump, x_end));
-           // vec3 y_grad = vec3(texture2D(texture_bump, y_start) - texture2D(texture_bump, y_end));
+           vec2 x_start = vec2(v_texture.x, v_texture.y);
+           vec2 x_end = vec2(v_texture.x, v_texture.y);
+           vec2 y_start = vec2(v_texture.x, v_texture.y - bump_step.y / 2.0);
+           vec2 y_end = vec2(v_texture.x, v_texture.y + bump_step.y / 2.0);
+           vec3 x_grad = vec3(texture2D(texture_bump, x_start) - texture2D(texture_bump, x_end));
+           vec3 y_grad = vec3(texture2D(texture_bump, y_start) - texture2D(texture_bump, y_end));
            
            vec4 current_point = texture2D(texture_bump, v_texture);
-           vec3 x_grad = vec3(texture2D(texture_bump, v_texture + dFdx(v_texture)) - current_point);
-           vec3 y_grad = vec3(texture2D(texture_bump, v_texture + dFdy(v_texture)) - current_point);
+           //vec3 x_grad = vec3(texture2D(texture_bump, v_texture - dFdx(v_texture) / 10.0) - texture2D(texture_bump, v_texture + dFdx(v_texture) / 10.0));
+           //vec3 y_grad = vec3(texture2D(texture_bump, v_texture - dFdy(v_texture) / 10.0) - texture2D(texture_bump, v_texture + dFdy(v_texture) / 10.0));
+           //vec3 x_grad = vec3(texture2D(texture_bump, v_texture + dFdx(v_texture)) - current_point);
+           //vec3 y_grad = vec3(texture2D(texture_bump, v_texture + dFdy(v_texture)) - current_point);
                       
            vec3 norm = normalize(v_normal + v_texture.x * x_grad + v_texture.y * y_grad);
            vec3 light_vec = light_position - frag_position;
@@ -192,5 +194,30 @@ const val PHONG_FRAGMENT_SHADER_WITH_BUMP_MAPPING =
            combined_color = mix(combined_color, texture1, texture1.w * texture2_intensity);
            
            gl_FragColor = vec4(attenuation * combined_light * vec3(combined_color), 1.0);
+        }
+    """
+
+const val BASE_FRAGMENT_SHADER_SPRITE =
+    """
+        precision mediump float;
+        
+        uniform sampler2D texture_unit;
+        uniform vec4 color;
+        
+        varying vec2 v_texture;
+        
+        void main() {
+           gl_FragColor = color * texture2D(texture_unit, v_texture);
+        }
+    """
+
+const val BASE_FRAGMENT_SHADER_LINE =
+    """
+        precision mediump float;
+        
+        varying vec4 v_color;
+        
+        void main() {
+           gl_FragColor = v_color;
         }
     """

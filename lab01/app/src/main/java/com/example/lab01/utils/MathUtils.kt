@@ -43,7 +43,11 @@ data class Vector(var x: Float = 0f,
         return Vector(x / l, y / l, z / l)
     }
 
+    fun copy() = Vector(x, y, z)
+
     fun toFloatArray() = floatArrayOf(x, y, z)
+    operator fun unaryMinus() = Vector(-x, -y, -z)
+    operator fun times(scalar: Long) = Vector(x * scalar, y * scalar, z * scalar)
 }
 
 private const val MULTIPLIER = (PI / 180).toFloat()

@@ -336,6 +336,7 @@
             android:layout_width="23dp"
             android:layout_height="19dp"
             android:background="#00978C8C"
+            android:enabled="true"
             android:fontFamily="sans-serif-thin"
             android:rotation="90"
             android:text="ToggleButton"
@@ -343,6 +344,7 @@
             android:textOff="Open"
             android:textOn="Hide"
             android:textSize="8sp"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

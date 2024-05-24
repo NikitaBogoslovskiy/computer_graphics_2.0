@@ -149,11 +149,11 @@ class PointLight {
         }
 
         val showMoreToggle = Dependencies.activity.findViewById<ToggleButton>(R.id.showMoreToggle)
-        showMoreToggle.isChecked = true
+        showMoreToggle.isChecked = false
         lightPanel.translationX = -lightPanel.width.toFloat()
         settingsPanel.translationX = -settingsPanel.width.toFloat()
         lightSwitch.translationX = -lightSwitch.width.toFloat()
-        openSettings()
+        hideSettings()
         showMoreToggle.setOnCheckedChangeListener { _, isChecked ->
             when(isChecked) {
                 true -> openSettings()
