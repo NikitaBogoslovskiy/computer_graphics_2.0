@@ -6,6 +6,7 @@ import android.opengl.Matrix
 import com.example.lab01.Dependencies.camera
 import com.example.lab01.model.scenes.particle_systems.BengalFire
 import com.example.lab01.model.scenes.Scene
+import com.example.lab01.model.scenes.particle_systems.Boom
 import com.example.lab01.model.scenes.particle_systems.Fireworks
 import com.example.lab01.model.scenes.particle_systems.SmokeAndMirrors
 import javax.microedition.khronos.egl.EGLConfig
@@ -25,7 +26,8 @@ class Renderer : GLSurfaceView.Renderer {
         //scene = Apelsinchik()
         //scene = BengalFire()
         //scene = Fireworks()
-        scene = SmokeAndMirrors()
+        //scene = SmokeAndMirrors()
+        scene = Boom()
     }
 
     override fun onDrawFrame(unused: GL10) {
